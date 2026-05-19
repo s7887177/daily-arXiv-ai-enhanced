@@ -1,6 +1,21 @@
 {
   "date": "2026-05-19",
+  "_order": "newest first (by arXiv id desc)",
   "articles": [
+    {
+      "id": "2605.15219v1",
+      "arxiv_id": "2605.15219",
+      "headline": "AI 能不能自己滾雪球變得無所不知？數學證明：不會，回報急遽遞減還有個污染陷阱",
+      "hook": "USC／MIT 等團隊用機率論分析 AI「生成—驗證—累積—再訓練」自我進化迴圈，證明發現成本隨 D 的 α 次方暴增、驗證稍不完美就會被假知識反噬，並說明為何人類引導在探索障壁附近最關鍵。",
+      "category_label": "AI 理論・基礎限制",
+      "importance": "中",
+      "authors": "Salman Avestimehr、Ken Duffy、Muriel Médard",
+      "affiliations": "University of Southern California、Northeastern University、MIT",
+      "url": "https://arxiv.org/abs/2605.15219",
+      "pdf": "https://arxiv.org/pdf/2605.15219",
+      "date": "2026-05-19",
+      "md": "data/articles/2605.15219v1.md"
+    },
     {
       "id": "2605.15217v1",
       "arxiv_id": "2605.15217",
@@ -28,20 +43,6 @@
       "pdf": "https://arxiv.org/pdf/2605.15205",
       "date": "2026-05-19",
       "md": "data/articles/2605.15205v1.md"
-    },
-    {
-      "id": "2605.15219v1",
-      "arxiv_id": "2605.15219",
-      "headline": "AI 能不能自己滾雪球變得無所不知？數學證明：不會，回報急遽遞減還有個污染陷阱",
-      "hook": "USC／MIT 等團隊用機率論分析 AI「生成—驗證—累積—再訓練」自我進化迴圈，證明發現成本隨 D 的 α 次方暴增、驗證稍不完美就會被假知識反噬，並說明為何人類引導在探索障壁附近最關鍵。",
-      "category_label": "AI 理論・基礎限制",
-      "importance": "中",
-      "authors": "Salman Avestimehr、Ken Duffy、Muriel Médard",
-      "affiliations": "University of Southern California、Northeastern University、MIT",
-      "url": "https://arxiv.org/abs/2605.15219",
-      "pdf": "https://arxiv.org/pdf/2605.15219",
-      "date": "2026-05-19",
-      "md": "data/articles/2605.15219v1.md"
     }
   ]
 }

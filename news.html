@@ -34,6 +34,8 @@
   /* article view */
   .overlay{position:fixed;inset:0;background:var(--bg);overflow-y:auto;display:none;z-index:40}
   .overlay.open{display:block}
+  /* reading column must stay well inside the fixed prev/next buttons */
+  .overlay .wrap{max-width:660px}
   .article{max-width:740px;margin:0 auto;padding:24px 24px 140px}
   .topbar{position:sticky;top:0;background:var(--bg);padding:12px 0;
     border-bottom:1px solid var(--line);display:flex;justify-content:space-between;
@@ -66,15 +68,14 @@
 
   /* fixed prev / next — always visible while reading */
   .nav{position:fixed;top:50%;transform:translateY(-50%);z-index:50;
-    width:46px;height:78px;display:flex;align-items:center;justify-content:center;
-    background:var(--card);border:1px solid var(--line);color:var(--ink);
-    cursor:pointer;font-size:22px;font-family:system-ui,sans-serif;
-    user-select:none}
-  .nav:hover{border-color:#6a6a6a}
-  .nav.prev{left:max(14px,calc(50% - 470px));border-radius:0 10px 10px 0}
-  .nav.next{right:max(14px,calc(50% - 470px));border-radius:10px 0 0 10px}
+    width:46px;height:46px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;background:var(--card);border:1px solid var(--line);
+    color:var(--ink);cursor:pointer;user-select:none;transition:border-color .15s}
+  .nav:hover{border-color:#7a7a7a}
+  .nav svg{width:18px;height:18px;display:block}
+  .nav.prev{left:max(14px,calc(50% - 400px))}
+  .nav.next{right:max(14px,calc(50% - 400px))}
   .nav[hidden]{display:none}
-  .nav small{position:absolute;bottom:7px;font-size:10px;color:var(--dim)}
 
   .empty{color:var(--dim);padding:70px 0;text-align:center;
     font-family:system-ui,sans-serif}
@@ -102,8 +103,12 @@
     <div class="body" id="body"></div>
   </div>
 </div>
-<div class="nav prev" id="prev" hidden>‹<small>上一篇</small></div>
-<div class="nav next" id="next" hidden>›<small>下一篇</small></div>
+<div class="nav prev" id="prev" hidden title="較新 / 上一篇" aria-label="上一篇">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+</div>
+<div class="nav next" id="next" hidden title="較舊 / 下一篇" aria-label="下一篇">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+</div>
 
 <script>
 const MANIFEST = "./data/articles/2026-05-19.json";
