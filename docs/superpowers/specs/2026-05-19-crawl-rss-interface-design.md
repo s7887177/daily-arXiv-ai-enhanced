@@ -145,7 +145,7 @@ Algorithm (closed set — a paper's primary is always among its own listed categ
 - New `.gitignore` entry for the local PDF directory (§11). `run.sh`/`run.yml`/Actions are NOT changed for the PDF tool — it is invoked manually and separately.
 
 ## 9. Open / To-Verify Items
-1. Module folder is `daily_arxiv_rss/` (decided). Exact invocation signature (output-path arg mirroring `-o`; categories from `CATEGORIES` env) — to be fixed in the implementation plan.
+1. Module folder is `daily_arxiv_rss/` (decided). Invocation: `--categories` from `CATEGORIES` env (default `cs.CV`); `--sot-dir` default `data/rss`; `--out` is **optional** — when omitted it defaults to `data/<feed pubDate>.jsonl` (the RSS announcement date, RFC822 `pubDate` → `YYYY-MM-DD`; falls back to UTC date only if no pubDate parseable). **The automated pipeline (`run.sh`/`run.yml`) keeps passing explicit `--out "data/${today}.jsonl"`** because downstream steps (`check_stats`, AI, convert, the pre-delete, `crawl_date` output) all key off that same UTC `${today}`; the feed-date default is a manual/local convenience only.
 2. Weekend RSS feed content (empirical, post-cutover).
 3. Cross-primary fallback frequency (empirical).
 4. Confirm RSS `<category>` ordering for `new` items is reliably primary-first (parity assumption; matches upstream's existing assumption).

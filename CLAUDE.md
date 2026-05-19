@@ -20,7 +20,8 @@ source .venv/bin/activate
 bash run.sh                      # 必須在 repo 根目錄執行
 
 # 單獨執行各階段(注意各自的工作目錄):
-uv run python -m daily_arxiv_rss.crawl --out data/$(date -u +%Y-%m-%d).jsonl   # repo 根目錄執行
+uv run python -m daily_arxiv_rss.crawl                     # repo 根目錄;--out 省略時=data/<feed pubDate>.jsonl
+# 注意:run.sh/run.yml 仍明確傳 --out "data/${today}.jsonl"(下游 check_stats/AI/convert 都對齊那個 UTC 日期)
 cd daily_arxiv && python daily_arxiv/check_stats.py        # 去重,退出碼決定後續(daily_arxiv/ 保留供此步)
 cd ai && python enhance.py --data ../data/<date>.jsonl --max_workers 4
 cd to_md && python convert.py --data ../data/<date>_AI_enhanced_<LANGUAGE>.jsonl
