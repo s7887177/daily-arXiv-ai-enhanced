@@ -131,7 +131,11 @@ Algorithm (closed set — a paper's primary is always among its own listed categ
 
 ## 7. Out of Scope (deferred)
 - Replacement (`announce_type=replace`) handling — feed exposes it; policy deferred.
-- Relocating/refactoring `check_stats.py` or changing its dedup key.
+- ~~Relocating/refactoring `check_stats.py`~~ **SCOPE CHANGE (user-approved):** the
+  dedup step is now owned by `daily_arxiv_rss/dedup.py` (see §12). It replicates
+  check_stats.py's behaviour but takes the date from the data filename (RSS feed
+  pubDate) instead of the wall clock. `daily_arxiv/check_stats.py` is **not
+  modified** — it simply becomes unused (`daily_arxiv/` still untouched).
 - Removing `scrapy` from `pyproject.toml` / deleting `daily_arxiv/` (kept intact for now).
 - Any change to AI/markdown/website stages.
 - Historical PDF backfill (the PDF tool §11 covers only the current run's papers).
@@ -177,3 +181,38 @@ A standalone, manually-run tool. Not part of the automated pipeline; not in CI; 
 ### 11.5 Open items
 - Exact CLI signature (input JSONL path, output dir, pacing/backoff parameters) — fixed in the implementation plan.
 - Per-file inter-download delay value — tuned conservatively in the plan; arXiv has no published per-file PDF rate limit, so err gentle.
+
+## 12. Dedup ownership (`daily_arxiv_rss/dedup.py`) — user-approved scope change
+
+**Why:** Full RSS-date alignment is impossible while the gate is
+`daily_arxiv/check_stats.py`, which hardcodes `datetime.now()` for both
+"today's file" and the 7-day window and takes no parameters. With feed-date
+filenames it would look for the wrong file and halt the pipeline daily.
+
+**Decision:** Own the dedup step in `daily_arxiv_rss/dedup.py`; stop calling
+`check_stats.py`. `daily_arxiv/` stays byte-for-byte untouched (check_stats.py
+becomes dead code, not modified — upstream-trackability preserved).
+
+**Contract (identical gate, RSS-date source):**
+- Input: `--data <path>`; the "today" date is parsed from the filename stem
+  (`YYYY-MM-DD`, the RSS feed pubDate the crawler wrote), NOT the wall clock.
+- Effect: rewrite the file in place removing papers whose `id` (versioned,
+  per §5) appeared in the prior 7 days' files in the same dir; delete the file
+  if all duplicate.
+- Exit codes identical to check_stats.py: `0` has_new_content, `1`
+  no_new_content / no_data, `2` error. run.sh/run.yml's existing `case`
+  mapping is unchanged.
+
+**Crawl handoff:** `crawl` prints the resolved output path to stdout (date
+known only after fetching the feed); the (temporary) run.* scripts capture it
+into `$out` / `today=$(basename "$out" .jsonl)` and feed it to dedup and the
+downstream AI/convert steps.
+
+**run.sh / run.yml are explicitly STOPGAP** (user: "scripts are temporary, to
+be refined into a fixed flow later"). Minimal manual wiring only; commented as
+STOPGAP in-file.
+
+**Open question (user hypothesis):** with RSS announce semantics + SOT, the
+7-day window may become unnecessary (consecutive announcement cycles rarely
+overlap). Kept for now as a cheap safety net and to preserve the
+"no new content → skip" gate; revisit after observing real feeds.
