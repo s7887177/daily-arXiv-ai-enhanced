@@ -1,7 +1,7 @@
 # Crawl Step Virtualization via RSS — Design Spec
 
 Date: 2026-05-19
-Status: Draft for review
+Status: Approved (2026-05-19) — proceeding to implementation plan
 Scope: (1) Replace the Scrapy-based crawl step with an RSS-based implementation behind a stable contract, without breaking the fork's existing interface. (2) Add a separate, manual, local-only PDF downloader for offline AI-agent analysis.
 
 ## 1. Context & Goal
@@ -59,7 +59,7 @@ The crawl step's existing interface, derived from `spiders/arxiv.py`, `pipelines
 
 - Do not modify anything under `daily_arxiv/` (leave the Scrapy project intact for upstream-trackability).
 - Only `run.sh` and `.github/workflows/run.yml` may change to repoint the crawl step.
-- New code lives in a new top-level module folder (name TBD in plan, e.g. `crawler/`).
+- New code lives in a new top-level module folder: **`daily_arxiv_rss/`**.
 - JSONL output schema stays exactly the 8 fields above — no added/removed fields.
 - No history dedup inside the crawler (that remains `check_stats.py`'s job, unchanged).
 
@@ -138,14 +138,14 @@ Algorithm (closed set — a paper's primary is always among its own listed categ
 - Automating/scheduling the PDF tool (it stays manual by design).
 
 ## 8. Integration Changes (the entire blast radius)
-- New module folder (new code only).
+- New module folder `daily_arxiv_rss/` (new code only).
 - `run.sh`: replace the `cd daily_arxiv` + `scrapy crawl arxiv -o ../data/${today}.jsonl` block with an invocation of the new module producing the same `data/${today}.jsonl`.
 - `.github/workflows/run.yml`: same replacement in the "Crawl arXiv papers" step.
 - `daily_arxiv/` untouched. Downstream stages untouched. Output schema unchanged (except `id` now versioned, by decision §5).
 - New `.gitignore` entry for the local PDF directory (§11). `run.sh`/`run.yml`/Actions are NOT changed for the PDF tool — it is invoked manually and separately.
 
 ## 9. Open / To-Verify Items
-1. New module's exact invocation signature (output-path arg mirroring `-o`; categories from `CATEGORIES` env) — to be fixed in the implementation plan.
+1. Module folder is `daily_arxiv_rss/` (decided). Exact invocation signature (output-path arg mirroring `-o`; categories from `CATEGORIES` env) — to be fixed in the implementation plan.
 2. Weekend RSS feed content (empirical, post-cutover).
 3. Cross-primary fallback frequency (empirical).
 4. Confirm RSS `<category>` ordering for `new` items is reliably primary-first (parity assumption; matches upstream's existing assumption).
