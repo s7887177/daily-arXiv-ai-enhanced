@@ -99,12 +99,16 @@ d. Write `data/articles/<id>.md` per the **Style guide** below.
 
 ### 5. Publish
 ```bash
-git add data/articles/index.json data/articles/${DATE}.json \
+test -f .nojekyll || touch .nojekyll          # REQUIRED: Pages is Jekyll-built;
+# without .nojekyll, Jekyll strips every data/articles/*.md → 404 online.
+# Never re-add _config.yml. Never enable .github/workflows/run.yml.
+git add .nojekyll data/articles/index.json data/articles/${DATE}.json \
         data/articles/*.md assets/articles/*.webp
 git commit -m "digest: ${DATE} (N articles)"
 git push origin main
 ```
-GitHub Pages redeploys automatically. Tell the user the live URL
+GitHub Pages redeploys automatically (CDN+browser cache the JSON hard — tell
+the user to hard-refresh, Ctrl+Shift+R). Tell the user the live URL
 `https://<owner>.github.io/<repo>/#${DATE}` and the count.
 
 ## Style guide (every article .md)
