@@ -63,25 +63,20 @@ echo "本地测试：爬取 $today 的arXiv论文... / Local test: Crawling $tod
 # 第一步：爬取数据 / Step 1: Crawl data
 echo "步骤1：开始爬取... / Step 1: Starting crawl..."
 
-# 检查今日文件是否已存在，如存在则删除 / Check if today's file exists, delete if found
-if [ -f "data/${today}.jsonl" ]; then
-    echo "🗑️ 发现今日文件已存在，正在删除重新生成... / Found existing today's file, deleting for fresh start..."
-    rm "data/${today}.jsonl"
-    echo "✅ 已删除现有文件：data/${today}.jsonl / Deleted existing file: data/${today}.jsonl"
-else
-    echo "📝 今日文件不存在，准备新建... / Today's file doesn't exist, ready to create new one..."
-fi
+# STOPGAP wiring (run.* are temporary, to be refined): the crawler picks the
+# output filename from the RSS feed date (pubDate) and prints that path to
+# stdout. write_jsonl truncates, so no pre-delete is needed.
+out=$(uv run python -m daily_arxiv_rss.crawl)
+today=$(basename "$out" .jsonl)   # feed pubDate; all later steps key off ${today}
 
-uv run python -m daily_arxiv_rss.crawl --out "data/${today}.jsonl"
-
-if [ ! -f "data/${today}.jsonl" ]; then
+if [ ! -f "$out" ]; then
     echo "爬取失败，未生成数据文件 / Crawling failed, no data file generated"
     exit 1
 fi
 
-# 第二步：检查去重 / Step 2: Check duplicates  
-echo "步骤2：执行去重检查... / Step 2: Performing intelligent deduplication check..."
-( cd daily_arxiv && python daily_arxiv/check_stats.py )
+# 第二步：检查去重 / Step 2: Check duplicates (our dedup, RSS-date aligned)
+echo "步骤2：执行去重检查... / Step 2: Performing dedup..."
+uv run python -m daily_arxiv_rss.dedup --data "$out"
 dedup_exit_code=$?
 
 case $dedup_exit_code in

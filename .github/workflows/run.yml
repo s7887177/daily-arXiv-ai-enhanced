@@ -28,26 +28,18 @@ jobs:
         today=$(date -u "+%Y-%m-%d")
         echo "开始爬取 $today 的arXiv论文... / Starting to crawl $today arXiv papers..."
         
-        # 检查今日文件是否已存在，如存在则删除 / Check if today's file exists, delete if found
-        if [ -f "data/${today}.jsonl" ]; then
-            echo "🗑️ 发现今日文件已存在，正在删除重新生成... / Found existing today's file, deleting for fresh start..."
-            rm "data/${today}.jsonl"
-            echo "✅ 已删除现有文件：data/${today}.jsonl / Deleted existing file: data/${today}.jsonl"
-        else
-            echo "📝 今日文件不存在，准备新建... / Today's file doesn't exist, ready to create new one..."
-        fi
-        
+        # STOPGAP wiring (run.* temporary, to be refined): the RSS crawler
+        # picks the filename from the feed pubDate and prints that path to
+        # stdout. write_jsonl truncates, so no pre-delete is needed.
         export CATEGORIES="${{ vars.CATEGORIES }}"
-        
-        # Use RSS-based crawler (daily_arxiv_rss)
-        uv run python -m daily_arxiv_rss.crawl --out "data/${today}.jsonl"
-        
-        # 检查爬取是否成功 / Check if crawling was successful
-        if [ ! -f "data/${today}.jsonl" ]; then
+        out=$(uv run python -m daily_arxiv_rss.crawl)
+        today=$(basename "$out" .jsonl)   # feed pubDate
+
+        if [ ! -f "$out" ]; then
             echo "爬取失败，未生成数据文件 / Crawling failed, no data file generated"
             exit 1
         fi
-        
+
         echo "crawl_date=$today" >> $GITHUB_OUTPUT
         echo "爬取完成 / Crawling completed"
         
@@ -57,10 +49,9 @@ jobs:
         source .venv/bin/activate
         echo "执行去重检查... / Performing intelligent deduplication check..."
         
-        cd daily_arxiv
-        # 执行去重检查脚本 / Execute intelligent deduplication check script
+        # 执行去重 (our dedup, RSS-date aligned) / Execute dedup
         set +e  # 暂时允许命令失败 / Temporarily allow command failure
-        python daily_arxiv/check_stats.py
+        uv run python -m daily_arxiv_rss.dedup --data "data/${{ steps.crawl_step.outputs.crawl_date }}.jsonl"
         
         # 获取退出码 / Get exit code
         dedup_exit_code=$?
