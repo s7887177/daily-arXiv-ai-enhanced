@@ -48,3 +48,36 @@ def test_resolved_categories_noop_for_new_item(cs_ai_xml):
     idx = build_announce_index(feeds)
     new_item = parse_feed(cs_ai_xml)[1]
     assert resolved_categories(new_item, idx) == ["cs.AI", "cs.CE"]
+
+
+import json
+from daily_arxiv_rss.transform import assemble, write_jsonl
+
+
+def test_assemble_dedups_by_id_and_resolves(cs_ai_xml, cs_cl_xml):
+    requested = {"cs.AI": parse_feed(cs_ai_xml)}
+    all_feeds = {"cs.AI": parse_feed(cs_ai_xml), "cs.CL": parse_feed(cs_cl_xml)}
+    idx = build_announce_index(all_feeds)
+    recs = assemble(requested, idx)
+    ids = [r["id"] for r in recs]
+    assert ids == ["2605.15204v1", "2605.15218v1", "2605.15202v1"]
+    cross = [r for r in recs if r["id"] == "2605.15202v1"][0]
+    assert cross["categories"][0] == "cs.CL"
+
+
+def test_assemble_collapses_same_id_across_feeds(cs_ai_xml, cs_cl_xml):
+    requested = {"cs.AI": parse_feed(cs_ai_xml), "cs.CL": parse_feed(cs_cl_xml)}
+    idx = build_announce_index(requested)
+    recs = assemble(requested, idx)
+    assert [r["id"] for r in recs].count("2605.15202v1") == 1
+
+
+def test_write_jsonl_roundtrip(tmp_path, cs_ai_xml):
+    requested = {"cs.AI": parse_feed(cs_ai_xml)}
+    idx = build_announce_index(requested)
+    recs = assemble(requested, idx)
+    out = tmp_path / "2026-05-18.jsonl"
+    write_jsonl(recs, out)
+    lines = out.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 3
+    assert json.loads(lines[0])["id"] == "2605.15204v1"

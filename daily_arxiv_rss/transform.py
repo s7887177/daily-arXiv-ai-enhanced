@@ -61,3 +61,30 @@ def to_record(item: RawItem) -> dict:
         "comment": None,
         "summary": _summary(item.description),
     }
+
+
+import json
+from pathlib import Path
+
+
+def assemble(requested_feeds: dict[str, list[RawItem]],
+             announce_index: dict[str, dict[str, str]]) -> list[dict]:
+    seen: set[str] = set()
+    out: list[dict] = []
+    for items in requested_feeds.values():
+        for it in items:
+            rec = to_record(it)
+            if rec["id"] in seen:
+                continue
+            seen.add(rec["id"])
+            rec["categories"] = resolved_categories(it, announce_index)
+            out.append(rec)
+    return out
+
+
+def write_jsonl(records: list[dict], path) -> None:
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("w", encoding="utf-8") as f:
+        for rec in records:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
