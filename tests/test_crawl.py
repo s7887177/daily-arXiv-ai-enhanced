@@ -50,9 +50,20 @@ def test_feed_date_none_when_unparseable():
 def test_run_default_out_uses_feed_pubdate(tmp_path, monkeypatch, cs_ai_xml, cs_cl_xml):
     feeds_bytes = {"cs.AI": cs_ai_xml, "cs.CL": cs_cl_xml}
     monkeypatch.chdir(tmp_path)  # default path is relative: data/<date>.jsonl
-    written = crawl.run(categories=["cs.AI"], out_path=None,
-                        sot_dir=str(tmp_path / "rss"), yyyymmdd="20260519",
-                        fetcher=lambda c: feeds_bytes[c])
+    returned = crawl.run(categories=["cs.AI"], out_path=None,
+                         sot_dir=str(tmp_path / "rss"), yyyymmdd="20260519",
+                         fetcher=lambda c: feeds_bytes[c])
     expected = tmp_path / "data" / "2026-05-18.jsonl"  # feed pubDate, NOT 0519
     assert expected.exists()
-    assert len(written) == 3
+    assert returned == "data/2026-05-18.jsonl"  # run() returns the path it wrote
+    assert len(expected.read_text(encoding="utf-8").splitlines()) == 3
+
+
+def test_main_prints_only_path_to_stdout(tmp_path, monkeypatch, capsys, cs_ai_xml, cs_cl_xml):
+    fb = {"cs.AI": cs_ai_xml, "cs.CL": cs_cl_xml}
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("CATEGORIES", "cs.AI")
+    monkeypatch.setattr(crawl, "_default_fetcher", lambda c: fb[c])
+    crawl.main(["--sot-dir", str(tmp_path / "rss")])
+    out = capsys.readouterr().out.strip()
+    assert out == "data/2026-05-18.jsonl"  # stdout = just the path (scripts capture this)

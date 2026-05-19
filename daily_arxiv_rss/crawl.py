@@ -24,7 +24,9 @@ def _feed_date(items) -> str | None:
     return None
 
 
-def run(categories, out_path, sot_dir, yyyymmdd, fetcher=_default_fetcher):
+def run(categories, out_path, sot_dir, yyyymmdd, fetcher=None):
+    if fetcher is None:
+        fetcher = _default_fetcher
     parsed: dict[str, list] = {}
 
     def pull(cat: str):
@@ -67,7 +69,7 @@ def run(categories, out_path, sot_dir, yyyymmdd, fetcher=_default_fetcher):
     records = assemble(requested, announce_index)
     write_jsonl(records, out_path)
     print(f"wrote {len(records)} records to {out_path}", file=sys.stderr)
-    return records
+    return out_path
 
 
 def parse_args(argv=None):
@@ -85,7 +87,8 @@ def parse_args(argv=None):
 def main(argv=None):
     ns = parse_args(argv)
     yyyymmdd = datetime.now(timezone.utc).strftime("%Y%m%d")
-    run(ns.categories, ns.out, ns.sot_dir, yyyymmdd)
+    out_path = run(ns.categories, ns.out, ns.sot_dir, yyyymmdd)
+    print(out_path)  # stdout = just the written path, for run.sh/run.yml to capture
 
 
 if __name__ == "__main__":
