@@ -20,3 +20,8 @@ package.json
 
 # Local manual PDF downloads (spec §11) — never commit
 pdfs/
+
+# Raw crawl artifacts — site only needs data/articles/**, keep main lean
+data/*.jsonl
+data/rss/
+/tmp/

@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>arXiv 科普日報 — 預覽</title>
+<title>arXiv 科普日報</title>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
   :root{ --bg:#000; --ink:#ededed; --dim:#9a9a9a; --line:#2b2b2b; --card:#0c0c0c; }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -13,9 +16,16 @@
     -webkit-font-smoothing:antialiased}
   a{color:var(--ink)}
   .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
-  header.site{border-bottom:1px solid var(--line);padding:34px 0 22px;margin-bottom:34px}
+  header.site{border-bottom:1px solid var(--line);padding:34px 0 22px;margin-bottom:34px;
+    display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
   header.site h1{font-size:30px;font-weight:700;letter-spacing:.5px}
   header.site .sub{color:var(--dim);margin-top:8px;font-size:15px}
+  .datebtn{display:inline-flex;align-items:center;gap:8px;background:var(--card);
+    border:1px solid var(--line);color:var(--ink);font-family:system-ui,sans-serif;
+    font-size:14px;padding:9px 14px;border-radius:999px;cursor:pointer}
+  .datebtn:hover{border-color:#7a7a7a}
+  .datebtn svg{width:15px;height:15px}
+  #dp{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 
   .grid{display:grid;gap:20px;
     grid-template-columns:repeat(auto-fill,minmax(330px,1fr));padding-bottom:90px}
@@ -31,12 +41,9 @@
   .card .src{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);
     font-family:system-ui,sans-serif;font-size:12.5px;color:var(--dim)}
 
-  /* article view */
   .overlay{position:fixed;inset:0;background:var(--bg);overflow-y:auto;display:none;z-index:40}
   .overlay.open{display:block}
-  /* reading column must stay well inside the fixed prev/next buttons */
   .overlay .wrap{max-width:660px}
-  .article{max-width:740px;margin:0 auto;padding:24px 24px 140px}
   .topbar{position:sticky;top:0;background:var(--bg);padding:12px 0;
     border-bottom:1px solid var(--line);display:flex;justify-content:space-between;
     align-items:center;font-family:system-ui,sans-serif;font-size:13px}
@@ -66,7 +73,6 @@
     text-align:left;vertical-align:top}
   .body th{color:#fff}
 
-  /* fixed prev / next — always visible while reading */
   .nav{position:fixed;top:50%;transform:translateY(-50%);z-index:50;
     width:46px;height:46px;border-radius:50%;display:flex;align-items:center;
     justify-content:center;background:var(--card);border:1px solid var(--line);
@@ -77,8 +83,7 @@
   .nav.next{right:max(14px,calc(50% - 400px))}
   .nav[hidden]{display:none}
 
-  .empty{color:var(--dim);padding:70px 0;text-align:center;
-    font-family:system-ui,sans-serif}
+  .empty{color:var(--dim);padding:70px 0;text-align:center;font-family:system-ui,sans-serif}
   @media(max-width:900px){ .nav.prev{left:6px} .nav.next{right:6px} }
 </style>
 </head>
@@ -87,8 +92,17 @@
 <div id="home">
   <div class="wrap">
     <header class="site">
-      <h1>arXiv 科普日報</h1>
-      <div class="sub">把當天的 AI 論文寫成給一般人看的說明文章。<span id="count"></span></div>
+      <div>
+        <h1>arXiv 科普日報</h1>
+        <div class="sub">把每天的 arXiv 論文寫成給一般人看的說明文章。<span id="count"></span></div>
+      </div>
+      <div>
+        <button class="datebtn" id="dateBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+          <span id="curDateLabel">—</span>
+        </button>
+        <input id="dp" type="text">
+      </div>
     </header>
     <div class="grid" id="grid"><div class="empty">載入中…</div></div>
   </div>
@@ -111,22 +125,22 @@
 </div>
 
 <script>
-const MANIFEST = "./data/articles/2026-05-19.json";
-let ARTICLES = [], cur = -1;
+const INDEX_URL = "./data/articles/index.json";
+const DAY_URL  = d => `./data/articles/${d}.json`;
+let DATES = [], curDate = null, ARTICLES = [], cur = -1, fp = null;
 const $ = id => document.getElementById(id);
 
 function showList(){
   $("overlay").classList.remove("open");
   $("prev").hidden = true; $("next").hidden = true;
-  if (location.hash) history.replaceState(null,"",location.pathname);
-  document.title = "arXiv 科普日報 — 預覽";
+  document.title = "arXiv 科普日報";
   window.scrollTo(0,0);
 }
 
 async function showArticle(i, push){
   const a = ARTICLES[i]; if(!a) return;
   cur = i;
-  if (push) location.hash = encodeURIComponent(a.id);
+  if (push) location.hash = `${curDate}/${a.arxiv_id}`;
   $("links").innerHTML =
     `<a href="${a.url}" target="_blank" rel="noopener">arXiv 摘要</a>` +
     `<a href="${a.pdf}" target="_blank" rel="noopener">PDF</a>`;
@@ -144,40 +158,70 @@ async function showArticle(i, push){
 
 function cardHTML(a,i){
   return `<article class="card" data-i="${i}">
-    <div class="kicker">重要度 ${a.importance} ・ ${a.category_label}</div>
+    <div class="kicker">${a.category_label}</div>
     <h2>${a.headline}</h2>
     <div class="hook">${a.hook}</div>
     <div class="src">${a.affiliations} ・ arXiv ${a.arxiv_id}</div>
   </article>`;
 }
 
-function routeFromHash(){
-  const h = decodeURIComponent(location.hash.replace(/^#/,""));
-  const i = ARTICLES.findIndex(a => a.id === h);
-  if (i >= 0) showArticle(i, false); else showList();
+async function loadDay(date){
+  const r = await fetch(DAY_URL(date));
+  if(!r.ok) throw new Error("HTTP "+r.status+" "+date);
+  const d = await r.json();
+  curDate = date;
+  ARTICLES = d.articles || [];
+  $("curDateLabel").textContent = date;
+  $("count").textContent = `（${date}・${ARTICLES.length} 篇）`;
+  $("grid").innerHTML = ARTICLES.map(cardHTML).join("") ||
+    `<div class="empty">這天沒有文章</div>`;
+  $("grid").querySelectorAll(".card").forEach(el=>{
+    el.addEventListener("click", ()=> showArticle(+el.dataset.i, true));
+  });
+  if (fp) fp.setDate(date, false);
 }
 
-$("back").addEventListener("click", showList);
+// hash: #<date>/<arxiv_id>  |  #<date>  |  #<arxiv_id>(舊) | 空
+async function route(){
+  const h = decodeURIComponent(location.hash.replace(/^#/,""));
+  let date = null, aid = null;
+  if (h.includes("/")) { [date, aid] = h.split("/"); }
+  else if (/^\d{4}-\d{2}-\d{2}$/.test(h)) { date = h; }
+  else if (h) { aid = h; }                       // bare id -> latest day
+  if (!date || !DATES.includes(date)) date = DATES[0];
+  if (!curDate || curDate !== date) {
+    try { await loadDay(date); }
+    catch(e){ $("grid").innerHTML = `<div class="empty">載入失敗：${e.message}</div>`; return; }
+  }
+  if (aid){
+    const i = ARTICLES.findIndex(a => a.arxiv_id === aid || a.id === aid);
+    if (i >= 0) { showArticle(i, false); return; }
+  }
+  showList();
+}
+
+$("back").addEventListener("click", ()=>{ location.hash = curDate || ""; });
 $("prev").addEventListener("click", ()=> showArticle(cur-1, true));
 $("next").addEventListener("click", ()=> showArticle(cur+1, true));
-window.addEventListener("hashchange", routeFromHash);
+$("dateBtn").addEventListener("click", ()=> fp && fp.open());
+window.addEventListener("hashchange", route);
 document.addEventListener("keydown", e=>{
   if(!$("overlay").classList.contains("open")) return;
-  if(e.key==="Escape") showList();
+  if(e.key==="Escape") location.hash = curDate || "";
   if(e.key==="ArrowLeft" && cur>0) showArticle(cur-1, true);
   if(e.key==="ArrowRight" && cur<ARTICLES.length-1) showArticle(cur+1, true);
 });
 
-fetch(MANIFEST).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
-.then(d=>{
-  ARTICLES = d.articles || [];
-  $("count").textContent = `今日 ${ARTICLES.length} 篇（${d.date}）`;
-  $("grid").innerHTML = ARTICLES.map(cardHTML).join("") ||
-    `<div class="empty">今日沒有文章</div>`;
-  $("grid").querySelectorAll(".card").forEach(el=>{
-    el.addEventListener("click", ()=> showArticle(+el.dataset.i, true));
+fetch(INDEX_URL).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+.then(idx=>{
+  DATES = (idx.dates || []).slice().sort().reverse();   // newest first
+  if (!DATES.length){ $("grid").innerHTML = `<div class="empty">尚無任何日期</div>`; return; }
+  fp = flatpickr("#dp", {
+    enable: DATES, defaultDate: DATES[0], clickOpens: false,
+    positionElement: $("dateBtn"),
+    onChange: (sel, str)=>{ if(str && str!==curDate) location.hash = str; }
   });
-  routeFromHash();           // deep-link: open article if URL has #id
+  route();
 }).catch(err=>{
   $("grid").innerHTML = `<div class="empty">載入失敗：${err.message}<br>
     請用本機伺服器開啟（python3 -m http.server），不要用 file:// 直接開。</div>`;
