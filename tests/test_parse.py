@@ -11,6 +11,7 @@ def test_parse_feed_extracts_items(cs_ai_xml):
     assert first.announce_type == "new"
     assert first.categories == ["cs.AI"]
     assert first.dc_creator == "Zhantao Wang"
+    assert first.pub_date == "Mon, 18 May 2026 00:00:00 -0400"
     assert "constrained state machine" in first.description
 
 

@@ -11,6 +11,7 @@ class RawItem:
     categories: list[str] = field(default_factory=list)
     announce_type: str = ""
     dc_creator: str = ""
+    pub_date: str = ""
 
 
 def _local(tag: str) -> str:
@@ -24,7 +25,7 @@ def parse_feed(xml_bytes: bytes) -> list[RawItem]:
         if _local(item_el.tag) != "item":
             continue
         data = {"guid": "", "link": "", "title": "", "description": "",
-                "announce_type": "", "dc_creator": ""}
+                "announce_type": "", "dc_creator": "", "pub_date": ""}
         categories: list[str] = []
         for child in item_el:
             name = _local(child.tag)
@@ -36,6 +37,8 @@ def parse_feed(xml_bytes: bytes) -> list[RawItem]:
                 data["announce_type"] = text
             elif name == "creator":
                 data["dc_creator"] = text
+            elif name == "pubDate":
+                data["pub_date"] = text
             elif name in data:
                 data[name] = text
         items.append(RawItem(categories=categories, **data))

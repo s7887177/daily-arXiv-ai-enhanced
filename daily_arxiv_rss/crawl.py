@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 
 from daily_arxiv_rss import feeds
 from daily_arxiv_rss.parse import parse_feed
@@ -10,6 +11,17 @@ from daily_arxiv_rss.transform import build_announce_index, assemble, write_json
 
 def _default_fetcher(category: str) -> bytes:
     return feeds.fetch(feeds.feed_url(category))
+
+
+def _feed_date(items) -> str | None:
+    """The announcement date written on the feed (RSS pubDate) as YYYY-MM-DD."""
+    for it in items:
+        if it.pub_date:
+            try:
+                return parsedate_to_datetime(it.pub_date).strftime("%Y-%m-%d")
+            except (TypeError, ValueError):
+                continue
+    return None
 
 
 def run(categories, out_path, sot_dir, yyyymmdd, fetcher=_default_fetcher):
@@ -26,6 +38,19 @@ def run(categories, out_path, sot_dir, yyyymmdd, fetcher=_default_fetcher):
         pull(cat)
 
     requested = {c: parsed[c] for c in categories if c in parsed}
+
+    if out_path is None:
+        date = None
+        for c in categories:
+            if c in requested:
+                date = _feed_date(requested[c])
+                if date:
+                    break
+        if date is None:
+            date = f"{yyyymmdd[:4]}-{yyyymmdd[4:6]}-{yyyymmdd[6:]}"
+            print(f"[warn] no parseable feed pubDate; falling back to {date}",
+                  file=sys.stderr)
+        out_path = os.path.join("data", f"{date}.jsonl")
 
     extra: set[str] = set()
     for items in requested.values():
@@ -47,7 +72,8 @@ def run(categories, out_path, sot_dir, yyyymmdd, fetcher=_default_fetcher):
 
 def parse_args(argv=None):
     p = argparse.ArgumentParser()
-    p.add_argument("--out", required=True)
+    p.add_argument("--out", default=None,
+                   help="output JSONL path; default data/<feed pubDate>.jsonl")
     p.add_argument("--categories",
                    default=os.environ.get("CATEGORIES", "cs.CV"))
     p.add_argument("--sot-dir", default="data/rss")

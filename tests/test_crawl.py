@@ -29,3 +29,30 @@ def test_parse_args_defaults(monkeypatch):
     assert ns.out == "data/x.jsonl"
     assert ns.categories == ["cs.AI", "cs.CL"]
     assert ns.sot_dir == "data/rss"
+
+
+def test_parse_args_out_optional_defaults_none():
+    ns = crawl.parse_args(["--categories", "cs.AI"])
+    assert ns.out is None
+
+
+def test_feed_date_from_pubdate(cs_ai_xml):
+    from daily_arxiv_rss.parse import parse_feed
+    assert crawl._feed_date(parse_feed(cs_ai_xml)) == "2026-05-18"
+
+
+def test_feed_date_none_when_unparseable():
+    from daily_arxiv_rss.parse import RawItem
+    bad = [RawItem(guid="g", link="", title="", description="", pub_date="")]
+    assert crawl._feed_date(bad) is None
+
+
+def test_run_default_out_uses_feed_pubdate(tmp_path, monkeypatch, cs_ai_xml, cs_cl_xml):
+    feeds_bytes = {"cs.AI": cs_ai_xml, "cs.CL": cs_cl_xml}
+    monkeypatch.chdir(tmp_path)  # default path is relative: data/<date>.jsonl
+    written = crawl.run(categories=["cs.AI"], out_path=None,
+                        sot_dir=str(tmp_path / "rss"), yyyymmdd="20260519",
+                        fetcher=lambda c: feeds_bytes[c])
+    expected = tmp_path / "data" / "2026-05-18.jsonl"  # feed pubDate, NOT 0519
+    assert expected.exists()
+    assert len(written) == 3
