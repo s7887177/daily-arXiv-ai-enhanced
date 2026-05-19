@@ -6,158 +6,176 @@
 <title>arXiv 科普日報 — 預覽</title>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
-  :root{
-    --bg:#faf8f4; --ink:#1a1a1a; --muted:#6b6257; --line:#e7e1d6;
-    --card:#fffdf9; --accent:#b3471f; --accent-soft:#f4e8e0;
-    --chip:#efe9dd;
-  }
+  :root{ --bg:#000; --ink:#ededed; --dim:#9a9a9a; --line:#2b2b2b; --card:#0c0c0c; }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--ink);
-    font-family:"Noto Serif TC","Songti TC",Georgia,"Times New Roman",serif;
-    -webkit-font-smoothing:antialiased;line-height:1.7}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
-  header.site{border-bottom:1px solid var(--line);padding:30px 0 22px;margin-bottom:34px}
-  header.site h1{font-size:30px;letter-spacing:.5px;font-weight:800}
-  header.site .sub{color:var(--muted);margin-top:6px;font-size:15px}
-  header.site .sub b{color:var(--accent)}
+  html,body{background:var(--bg);color:var(--ink)}
+  body{font-family:"Noto Serif TC","Songti TC",Georgia,serif;line-height:1.75;
+    -webkit-font-smoothing:antialiased}
+  a{color:var(--ink)}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+  header.site{border-bottom:1px solid var(--line);padding:34px 0 22px;margin-bottom:34px}
+  header.site h1{font-size:30px;font-weight:700;letter-spacing:.5px}
+  header.site .sub{color:var(--dim);margin-top:8px;font-size:15px}
 
-  .grid{display:grid;gap:22px;
-    grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
-    padding-bottom:80px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:22px 22px 20px;cursor:pointer;display:flex;flex-direction:column;
-    transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
-  .card:hover{transform:translateY(-4px);
-    box-shadow:0 14px 34px -16px rgba(80,50,20,.35);border-color:#d8cdb8}
-  .chips{display:flex;gap:8px;align-items:center;margin-bottom:13px;flex-wrap:wrap}
-  .chip{font-family:system-ui,sans-serif;font-size:12px;letter-spacing:.4px;
-    background:var(--chip);color:var(--muted);padding:4px 10px;border-radius:999px}
-  .chip.imp-高{background:var(--accent);color:#fff}
-  .chip.imp-中{background:#caa15a;color:#fff}
-  .chip.imp-非AI{background:#cfcabb;color:#4a463c}
-  .card h2{font-size:21px;line-height:1.42;font-weight:800;margin-bottom:11px}
-  .card .hook{color:#473f34;font-size:15px;
-    display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;
-    overflow:hidden}
-  .card .meta{margin-top:auto;padding-top:16px;color:var(--muted);
-    font-family:system-ui,sans-serif;font-size:12.5px;
-    border-top:1px dashed var(--line);margin-top:18px}
-  .card .readmore{color:var(--accent);font-family:system-ui,sans-serif;
-    font-size:13px;margin-top:10px;font-weight:600}
+  .grid{display:grid;gap:20px;
+    grid-template-columns:repeat(auto-fill,minmax(330px,1fr));padding-bottom:90px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:22px;cursor:pointer;display:flex;flex-direction:column;
+    transition:border-color .15s ease, transform .15s ease}
+  .card:hover{border-color:#5a5a5a;transform:translateY(-3px)}
+  .card .kicker{font-family:system-ui,sans-serif;font-size:12px;color:var(--dim);
+    letter-spacing:.5px;margin-bottom:12px}
+  .card h2{font-size:21px;line-height:1.45;font-weight:700;margin-bottom:11px}
+  .card .hook{color:var(--dim);font-size:15px;
+    display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+  .card .src{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);
+    font-family:system-ui,sans-serif;font-size:12.5px;color:var(--dim)}
 
-  /* article overlay */
-  .overlay{position:fixed;inset:0;background:var(--bg);overflow-y:auto;
-    display:none;z-index:50}
+  /* article view */
+  .overlay{position:fixed;inset:0;background:var(--bg);overflow-y:auto;display:none;z-index:40}
   .overlay.open{display:block}
-  .article{max-width:760px;margin:0 auto;padding:26px 24px 120px}
-  .topbar{position:sticky;top:0;background:linear-gradient(var(--bg),var(--bg) 70%,transparent);
-    padding:14px 0 12px;display:flex;justify-content:space-between;align-items:center}
-  .back{font-family:system-ui,sans-serif;font-size:14px;color:var(--accent);
-    background:none;border:1px solid var(--accent);padding:7px 15px;
-    border-radius:999px;cursor:pointer}
-  .back:hover{background:var(--accent);color:#fff}
-  .src a{font-family:system-ui,sans-serif;font-size:13px;color:var(--muted);
-    margin-left:14px;text-decoration:none;border-bottom:1px solid var(--line)}
-  .src a:hover{color:var(--accent)}
-  .paperbox{background:var(--accent-soft);border-radius:10px;padding:15px 18px;
-    font-family:system-ui,sans-serif;font-size:13px;color:#5a4b3e;margin:18px 0 8px}
-  .paperbox div{margin:3px 0}
-  .article .body{font-size:17.5px}
-  .article .body h1{font-size:28px;line-height:1.35;margin:14px 0 22px;font-weight:800}
-  .article .body h2{font-size:21px;margin:34px 0 12px;padding-top:8px;
-    border-top:1px solid var(--line);font-weight:800}
-  .article .body h3{font-size:18px;margin:22px 0 8px;font-weight:700}
-  .article .body p{margin:14px 0}
-  .article .body ul,.article .body ol{margin:12px 0 12px 26px}
-  .article .body li{margin:6px 0}
-  .article .body hr{border:none;border-top:1px solid var(--line);margin:26px 0}
-  .article .body table{border-collapse:collapse;width:100%;margin:18px 0;
+  .article{max-width:740px;margin:0 auto;padding:24px 24px 140px}
+  .topbar{position:sticky;top:0;background:var(--bg);padding:12px 0;
+    border-bottom:1px solid var(--line);display:flex;justify-content:space-between;
+    align-items:center;font-family:system-ui,sans-serif;font-size:13px}
+  .topbar a,.topbar button{color:var(--dim);background:none;border:none;
+    font:inherit;cursor:pointer;text-decoration:none}
+  .topbar a:hover,.topbar button:hover{color:var(--ink)}
+  .topbar .links a{margin-left:18px}
+
+  .body{font-size:18px;margin-top:26px}
+  .body h1{font-size:30px;line-height:1.35;font-weight:700;margin:6px 0 26px}
+  .body h2{font-size:21px;font-weight:700;margin:34px 0 12px;
+    padding-top:18px;border-top:1px solid var(--line)}
+  .body h3{font-size:18px;font-weight:700;margin:22px 0 8px}
+  .body p{margin:15px 0}
+  .body strong{font-weight:700;color:#fff}
+  .body em{font-style:normal}
+  .body ul,.body ol{margin:12px 0 12px 24px}
+  .body li{margin:7px 0}
+  .body blockquote{border-left:2px solid var(--line);padding-left:16px;
+    color:var(--dim);margin:16px 0}
+  .body hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+  .body img{max-width:100%;height:auto;display:block;margin:20px auto;
+    background:#fff;border:1px solid var(--line);border-radius:6px;padding:8px}
+  .body table{border-collapse:collapse;width:100%;margin:18px 0;
     font-family:system-ui,sans-serif;font-size:14px}
-  .article .body th,.article .body td{border:1px solid var(--line);
-    padding:9px 11px;text-align:left;vertical-align:top}
-  .article .body th{background:var(--chip)}
-  .article .body strong{color:var(--accent)}
-  .empty{color:var(--muted);padding:60px 0;text-align:center;
+  .body th,.body td{border:1px solid var(--line);padding:9px 11px;
+    text-align:left;vertical-align:top}
+  .body th{color:#fff}
+
+  /* fixed prev / next — always visible while reading */
+  .nav{position:fixed;top:50%;transform:translateY(-50%);z-index:50;
+    width:46px;height:78px;display:flex;align-items:center;justify-content:center;
+    background:var(--card);border:1px solid var(--line);color:var(--ink);
+    cursor:pointer;font-size:22px;font-family:system-ui,sans-serif;
+    user-select:none}
+  .nav:hover{border-color:#6a6a6a}
+  .nav.prev{left:max(14px,calc(50% - 470px));border-radius:0 10px 10px 0}
+  .nav.next{right:max(14px,calc(50% - 470px));border-radius:10px 0 0 10px}
+  .nav[hidden]{display:none}
+  .nav small{position:absolute;bottom:7px;font-size:10px;color:var(--dim)}
+
+  .empty{color:var(--dim);padding:70px 0;text-align:center;
     font-family:system-ui,sans-serif}
+  @media(max-width:900px){ .nav.prev{left:6px} .nav.next{right:6px} }
 </style>
 </head>
 <body>
+
 <div id="home">
   <div class="wrap">
     <header class="site">
       <h1>arXiv 科普日報</h1>
-      <div class="sub">把當天的 AI 論文寫成<b>給一般人看的說明文章</b>。點開是文章,縮起來是新聞小卡。<span id="count"></span></div>
+      <div class="sub">把當天的 AI 論文寫成給一般人看的說明文章。<span id="count"></span></div>
     </header>
     <div class="grid" id="grid"><div class="empty">載入中…</div></div>
   </div>
 </div>
 
 <div class="overlay" id="overlay">
-  <div class="article">
+  <div class="wrap">
     <div class="topbar">
-      <button class="back" id="back">← 回列表</button>
-      <span class="src" id="src"></span>
+      <button id="back">← 回列表</button>
+      <span class="links" id="links"></span>
     </div>
-    <div id="paperbox"></div>
     <div class="body" id="body"></div>
   </div>
 </div>
+<div class="nav prev" id="prev" hidden>‹<small>上一篇</small></div>
+<div class="nav next" id="next" hidden>›<small>下一篇</small></div>
 
 <script>
-const DATA_URL = "./data/articles/2026-05-19.json";
-const grid = document.getElementById("grid");
-const overlay = document.getElementById("overlay");
-let ARTICLES = [];
+const MANIFEST = "./data/articles/2026-05-19.json";
+let ARTICLES = [], cur = -1;
+const $ = id => document.getElementById(id);
 
-function cardHTML(a, i){
+function showList(){
+  $("overlay").classList.remove("open");
+  $("prev").hidden = true; $("next").hidden = true;
+  if (location.hash) history.replaceState(null,"",location.pathname);
+  document.title = "arXiv 科普日報 — 預覽";
+  window.scrollTo(0,0);
+}
+
+async function showArticle(i, push){
+  const a = ARTICLES[i]; if(!a) return;
+  cur = i;
+  if (push) location.hash = encodeURIComponent(a.id);
+  $("links").innerHTML =
+    `<a href="${a.url}" target="_blank" rel="noopener">arXiv 摘要</a>` +
+    `<a href="${a.pdf}" target="_blank" rel="noopener">PDF</a>`;
+  $("body").innerHTML = "<p style='color:#9a9a9a'>載入文章中…</p>";
+  $("overlay").classList.add("open");
+  window.scrollTo(0,0); $("overlay").scrollTop = 0;
+  try{
+    const r = await fetch(a.md); if(!r.ok) throw new Error("HTTP "+r.status);
+    $("body").innerHTML = marked.parse(await r.text());
+  }catch(e){ $("body").innerHTML = `<p>文章載入失敗：${e.message}</p>`; }
+  document.title = a.headline + " — arXiv 科普日報";
+  $("prev").hidden = i <= 0;
+  $("next").hidden = i >= ARTICLES.length - 1;
+}
+
+function cardHTML(a,i){
   return `<article class="card" data-i="${i}">
-    <div class="chips">
-      <span class="chip imp-${a.importance}">${a.importance==='非AI'?'非 AI':'重要度 '+a.importance}</span>
-      <span class="chip">${a.category_label}</span>
-    </div>
+    <div class="kicker">重要度 ${a.importance} ・ ${a.category_label}</div>
     <h2>${a.headline}</h2>
     <div class="hook">${a.hook}</div>
-    <div class="meta">${a.affiliations} ・ arXiv ${a.arxiv_id}</div>
-    <div class="readmore">閱讀全文 →</div>
+    <div class="src">${a.affiliations} ・ arXiv ${a.arxiv_id}</div>
   </article>`;
 }
 
-function openArticle(a){
-  document.getElementById("paperbox").innerHTML =
-    `<div class="paperbox">
-       <div><b>原始論文：</b>${a.original_title}</div>
-       <div><b>作者：</b>${a.authors}</div>
-       <div><b>單位：</b>${a.affiliations}</div>
-       <div><b>arXiv：</b>${a.arxiv_id}　|　分類：${a.category_label}</div>
-     </div>`;
-  document.getElementById("src").innerHTML =
-    `<a href="${a.url}" target="_blank" rel="noopener">arXiv 摘要頁</a>
-     <a href="${a.pdf}" target="_blank" rel="noopener">PDF</a>`;
-  document.getElementById("body").innerHTML = marked.parse(a.body_md || "");
-  overlay.classList.add("open");
-  window.scrollTo(0,0);
-  overlay.scrollTop = 0;
+function routeFromHash(){
+  const h = decodeURIComponent(location.hash.replace(/^#/,""));
+  const i = ARTICLES.findIndex(a => a.id === h);
+  if (i >= 0) showArticle(i, false); else showList();
 }
-function closeArticle(){ overlay.classList.remove("open"); }
 
-document.getElementById("back").addEventListener("click", closeArticle);
-document.addEventListener("keydown", e => { if(e.key==="Escape") closeArticle(); });
+$("back").addEventListener("click", showList);
+$("prev").addEventListener("click", ()=> showArticle(cur-1, true));
+$("next").addEventListener("click", ()=> showArticle(cur+1, true));
+window.addEventListener("hashchange", routeFromHash);
+document.addEventListener("keydown", e=>{
+  if(!$("overlay").classList.contains("open")) return;
+  if(e.key==="Escape") showList();
+  if(e.key==="ArrowLeft" && cur>0) showArticle(cur-1, true);
+  if(e.key==="ArrowRight" && cur<ARTICLES.length-1) showArticle(cur+1, true);
+});
 
-fetch(DATA_URL).then(r=>{
-  if(!r.ok) throw new Error("HTTP "+r.status);
-  return r.json();
-}).then(d=>{
+fetch(MANIFEST).then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+.then(d=>{
   ARTICLES = d.articles || [];
-  document.getElementById("count").textContent =
-    `　今日 ${ARTICLES.length} 篇（${d.date}）`;
-  grid.innerHTML = ARTICLES.map(cardHTML).join("") ||
+  $("count").textContent = `今日 ${ARTICLES.length} 篇（${d.date}）`;
+  $("grid").innerHTML = ARTICLES.map(cardHTML).join("") ||
     `<div class="empty">今日沒有文章</div>`;
-  grid.querySelectorAll(".card").forEach(el=>{
-    el.addEventListener("click", ()=>openArticle(ARTICLES[+el.dataset.i]));
+  $("grid").querySelectorAll(".card").forEach(el=>{
+    el.addEventListener("click", ()=> showArticle(+el.dataset.i, true));
   });
+  routeFromHash();           // deep-link: open article if URL has #id
 }).catch(err=>{
-  grid.innerHTML = `<div class="empty">載入失敗：${err.message}<br>
-    請用本機伺服器開啟（見 NOTES-articles.md），不要用 file:// 直接開。</div>`;
+  $("grid").innerHTML = `<div class="empty">載入失敗：${err.message}<br>
+    請用本機伺服器開啟（python3 -m http.server），不要用 file:// 直接開。</div>`;
 });
 </script>
 </body>

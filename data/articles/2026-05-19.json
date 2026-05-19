@@ -1,0 +1,47 @@
+{
+  "date": "2026-05-19",
+  "articles": [
+    {
+      "id": "2605.15217v1",
+      "arxiv_id": "2605.15217",
+      "headline": "AI 幫銀行核貸看似公平，腦袋裡卻一層層放大種族偏見——而且能被便宜地引爆",
+      "hook": "英格蘭銀行研究者發現：大型語言模型做房貸核貸時輸出對各種族一視同仁，但內部對種族的編碼逐層放大、會左右決定，且用不到 6000 個參數的微調就能讓它穩定帶偏見。只查輸出的公平性審計形同虛設。",
+      "category_label": "AI 治理・公平性",
+      "importance": "高",
+      "authors": "Jagdish Tripathy、Marcus Buckmann",
+      "affiliations": "Bank of England（英格蘭銀行）",
+      "url": "https://arxiv.org/abs/2605.15217",
+      "pdf": "https://arxiv.org/pdf/2605.15217",
+      "date": "2026-05-19",
+      "md": "data/articles/2605.15217v1.md"
+    },
+    {
+      "id": "2605.15205v1",
+      "arxiv_id": "2605.15205",
+      "headline": "拼命讓 AI「更懂人心」，真的有用嗎？實測：考試有用，真實對話常常感覺不到",
+      "hook": "微軟亞研院等團隊用真實多輪對話＋真人使用者研究測試四種「心智理論強化」技術：benchmark 分數的進步不一定遷移到互動，只在諮商類場景有限有效，而且進步小到使用者根本感覺不到。",
+      "category_label": "人機互動・評估方法",
+      "importance": "中",
+      "authors": "Nanxu Gong、Zixin Chen、Haotian Li 等",
+      "affiliations": "Arizona State University、HKUST、Microsoft Research Asia、Smith College",
+      "url": "https://arxiv.org/abs/2605.15205",
+      "pdf": "https://arxiv.org/pdf/2605.15205",
+      "date": "2026-05-19",
+      "md": "data/articles/2605.15205v1.md"
+    },
+    {
+      "id": "2605.15219v1",
+      "arxiv_id": "2605.15219",
+      "headline": "AI 能不能自己滾雪球變得無所不知？數學證明：不會，回報急遽遞減還有個污染陷阱",
+      "hook": "USC／MIT 等團隊用機率論分析 AI「生成—驗證—累積—再訓練」自我進化迴圈，證明發現成本隨 D 的 α 次方暴增、驗證稍不完美就會被假知識反噬，並說明為何人類引導在探索障壁附近最關鍵。",
+      "category_label": "AI 理論・基礎限制",
+      "importance": "中",
+      "authors": "Salman Avestimehr、Ken Duffy、Muriel Médard",
+      "affiliations": "University of Southern California、Northeastern University、MIT",
+      "url": "https://arxiv.org/abs/2605.15219",
+      "pdf": "https://arxiv.org/pdf/2605.15219",
+      "date": "2026-05-19",
+      "md": "data/articles/2605.15219v1.md"
+    }
+  ]
+}
