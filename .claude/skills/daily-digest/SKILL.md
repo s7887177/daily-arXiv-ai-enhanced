@@ -9,16 +9,33 @@ You produce one science-pop article per arXiv paper for the day and publish the 
 Design ref: `docs/superpowers/specs/2026-05-19-daily-digest-deploy-design.md`.
 Run everything from the repo root. The user has ample token quota — quality over speed.
 
+## FIRST: read POLICY.md
+
+Read `.claude/skills/daily-digest/POLICY.md` before doing anything. It is the
+user-owned steering file. **Where POLICY.md and this SKILL differ, POLICY.md
+wins** (style, scope, length, structure, tone). This SKILL only describes the
+mechanism; POLICY.md describes what the user wants.
+
 ## Hard rules
 
 - **No filtering, no triage.** Every paper from the crawl (all categories the
   crawler returns, both `announce_type` `new` AND `cross`) gets a **full**
   article. There is no "short note" tier.
 - **Resumable.** Before writing an article, if `data/articles/<id>.md` already
-  exists, SKIP that paper. Re-running continues where you stopped.
+  exists, SKIP that paper. Re-running continues where you stopped. A full day
+  is ~500+ papers and **will** hit the Claude 5-hour usage cap mid-run — that
+  is expected; the user just re-runs `/daily-digest` and it continues.
+- **One paper at a time per subagent; skip just the bad one.** If a single
+  paper's text trips a content/usage-policy refusal, skip ONLY that paper
+  (report `skipped (content)`) and continue — never let one paper abort a
+  batch. Describe sensitive research (deepfake/adversarial/privacy) neutrally;
+  these are legitimate published papers.
 - **Figure captions must match the image you actually saw.** Never invent a
   caption. If a paper has no usable raster/diagram figure, omit the image and
   say so in the text — do not fabricate.
+- **No PDF → skip honestly.** Some papers' PDFs are unobtainable (arXiv serves
+  0 bytes, or persistent HTTP 429). Skip and list them; never fabricate from
+  the abstract alone. ~4/day is normal.
 - Do not touch `daily_arxiv/`. Do not commit `pdfs/`, `data/*.jsonl`,
   `data/rss/` (gitignored).
 
@@ -36,12 +53,38 @@ Exit `2` → report the error, STOP. Exit `0` → continue.
 ### 2. Download PDFs (gentle, gitignored)
 ```bash
 uv run python -m daily_arxiv_rss.pdf --data "$OUT" --out-dir pdfs
+find pdfs -name '*.pdf' -size 0 -delete                     # corrupt 0-byte
+uv run python -m daily_arxiv_rss.pdf --data "$OUT" --out-dir pdfs  # refetch
 ```
+(The bulk downloader's skip-existing does NOT detect 0-byte files; the prune
++ refetch recovers them. A few may still 429 — handled as "no PDF" in step 3.)
 
-### 3. Per paper (iterate every record in `$OUT`)
+### 3. Process papers as parallel subagent waves
 
-`id` is the versioned id (e.g. `2605.15202v1`); `arxiv_id` = id without `vN`.
-**If `data/articles/<id>.md` exists, skip.**
+A day is too large to do serially. Split the remaining work into per-subagent
+worklists and dispatch a wave of parallel subagents; commit between waves so
+the site fills in incrementally; repeat until none remain.
+
+```bash
+uv run python -m daily_arxiv_rss.wave --date "$DATE" --wave 100 --per 10
+```
+This prunes 0-byte PDFs, then writes `/tmp/digest-wave/agent-NN.jsonl` —
+each is one subagent's worklist (papers with a whole PDF, no article yet,
+newest first). Dispatch one subagent per `agent-NN.jsonl` **in parallel**
+(general-purpose agents; ~10 agents/wave). After each wave: run step 4
+(manifest) + step 5 (commit/push), then re-run the `wave` command and dispatch
+again. Stop when `picked=0`. Skip-if-exists makes the whole loop resumable.
+
+**Each subagent** is given its `agent-NN.jsonl` and these instructions:
+process every record IN ORDER, ONE AT A TIME (fully finish one before the
+next, so a content-block on one paper can't lose the others); for each
+`id` (versioned, e.g. `2605.15202v1`; `arxiv_id` = id without `vN`):
+- if `data/articles/<id>.md` exists → skip (`skipped (exists)`)
+- if `pdfs/<id>.pdf` missing → skip (`skipped (no pdf)`); do NOT download
+- if its text trips a refusal → skip ONLY it (`skipped (content)`), continue
+- else do a–d below, then report `<id>: done (fig: yes/no)`.
+The subagent writes ONLY `data/articles/<id>.md` and
+`assets/articles/<id>-fig1.webp` for its ids — no git, no manifest, no jsonl.
 
 a. Extract text:
 ```bash
@@ -49,7 +92,7 @@ uv run --with pypdf python - <<'PY'
 from pypdf import PdfReader
 import sys
 r=PdfReader(f"pdfs/{sys.argv[1]}.pdf")
-open(f"/tmp/{sys.argv[1]}.txt","w",encoding="utf-8").write(
+open(f"/tmp/{sys.argv[1]}.txt","w",encoding="utf-8",errors="replace").write(
   "\n".join((p.extract_text() or "") for p in r.pages))
 PY
 ```
@@ -89,13 +132,13 @@ per image so it's the smallest that stays legible (simple line charts → smalle
 d. Write `data/articles/<id>.md` per the **Style guide** below.
 
 ### 4. Manifest + index
-- Write `data/articles/<DATE>.json`:
-  `{"date":"<DATE>","_order":"newest first (by arXiv id desc)","articles":[ ... ]}`
-  sorted by `arxiv_id` **descending**. Each entry exactly:
-  `id, arxiv_id, headline, hook, category_label, importance, authors,
-  affiliations, url, pdf, date, md` where `md` = `data/articles/<id>.md`.
-  (`importance` may be `"高"`/`"中"`; it is not used for filtering, only display.)
-- Ensure `<DATE>` is in `data/articles/index.json` `"dates"` (add if missing).
+```bash
+uv run python -m daily_arxiv_rss.manifest --date "$DATE"
+```
+Rebuilds `data/articles/<DATE>.json` (newest arXiv id first) from every
+`data/articles/*.md`, joining paper metadata from the jsonl, preserving any
+hand-written entries not in today's crawl, and ensuring `<DATE>` is in
+`data/articles/index.json`. Run after every wave (it is idempotent).
 
 ### 5. Publish
 ```bash
@@ -140,7 +183,11 @@ Tone: concrete, honest about limitations, no hype. Use `**bold**` sparingly
 relative with NO leading slash (`assets/articles/...`).
 
 ## Notes
-- A day is large; if you hit the quota, just re-run `/daily-digest` later —
-  step 3's skip-if-exists makes it resume.
-- Existing examples to match in voice/length: `data/articles/2605.15217v1.md`,
+- The **Style guide** above is the default; **POLICY.md overrides it**. Pass
+  the relevant POLICY.md points into each subagent's instructions.
+- A day is large (~500+); expect to hit the 5-hour quota mid-run. Just re-run
+  `/daily-digest` later — the wave loop + skip-if-exists resumes automatically.
+- "Rewrite an already-published day with new POLICY": `rm` that day's
+  `data/articles/*.md` (keep hand-written seeds), then run the wave loop again.
+- Examples to match in voice/length: `data/articles/2605.15217v1.md`,
   `2605.15205v1.md`, `2605.15219v1.md`.
