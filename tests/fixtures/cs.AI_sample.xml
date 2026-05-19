@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+<title>cs.AI</title>
+<item>
+<title>SDOF: Taming the Alignment Tax</title>
+<link>https://arxiv.org/abs/2605.15204</link>
+<description>arXiv:2605.15204v1 Announce Type: new
+Abstract: We present a constrained state machine framework for multi-agent execution.</description>
+<guid isPermaLink="false">oai:arXiv.org:2605.15204v1</guid>
+<category>cs.AI</category>
+<pubDate>Mon, 18 May 2026 00:00:00 -0400</pubDate>
+<arxiv:announce_type>new</arxiv:announce_type>
+<dc:creator>Zhantao Wang</dc:creator>
+</item>
+<item>
+<title>CAX-Agent: A Lightweight Agent Harness</title>
+<link>https://arxiv.org/abs/2605.15218</link>
+<description>arXiv:2605.15218v1 Announce Type: new
+Abstract: Large language models deployed for MAPDL finite-element simulation face reliability challenges.</description>
+<guid isPermaLink="false">oai:arXiv.org:2605.15218v1</guid>
+<category>cs.AI</category>
+<category>cs.CE</category>
+<pubDate>Mon, 18 May 2026 00:00:00 -0400</pubDate>
+<arxiv:announce_type>new</arxiv:announce_type>
+<dc:creator>Chenying Lin, Yichen Hai, Yi He</dc:creator>
+</item>
+<item>
+<title>DeepSlide: From Artifacts to Presentation Delivery</title>
+<link>https://arxiv.org/abs/2605.15202</link>
+<description>arXiv:2605.15202v1 Announce Type: cross
+Abstract: We present DeepSlide, a human-in-the-loop multi-agent system.</description>
+<guid isPermaLink="false">oai:arXiv.org:2605.15202v1</guid>
+<category>cs.AI</category>
+<category>cs.CL</category>
+<category>cs.IR</category>
+<pubDate>Mon, 18 May 2026 00:00:00 -0400</pubDate>
+<arxiv:announce_type>cross</arxiv:announce_type>
+<dc:creator>Ming Yang, Zhiwei Zhang</dc:creator>
+</item>
+</channel>
+</rss>

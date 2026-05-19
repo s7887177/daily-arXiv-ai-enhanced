@@ -17,3 +17,6 @@ package-lock.json
 yarn.lock
 .DS_Store
 package.json
+
+# Local manual PDF downloads (spec §11) — never commit
+pdfs/
