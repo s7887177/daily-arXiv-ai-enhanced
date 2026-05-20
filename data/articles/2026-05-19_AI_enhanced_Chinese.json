@@ -1,0 +1,20 @@
+{
+  "date": "2026-05-19_AI_enhanced_Chinese",
+  "_order": "newest first (by arXiv id desc)",
+  "articles": [
+    {
+      "id": "2605.15202v1",
+      "arxiv_id": "2605.15202",
+      "headline": "不只幫你做投影片——AI 陪你把整場報告準備到能站上台",
+      "hook": "DeepSlide 是一個有人類在迴圈裡的多代理人系統，不只生出一份漂亮的投影片，而是從需求確認、敘事規劃到講稿撰寫、臨場排練，陪你把整場報告準備好。",
+      "category_label": "cs.AI / cs.CL / cs.IR",
+      "importance": "中",
+      "authors": "Ming Yang、Zhiwei Zhang、Jiahang Li、Haoseng Liu、Yuzheng Cai、Weiguo Zheng",
+      "affiliations": "復旦大學計算機科學學院",
+      "url": "https://arxiv.org/abs/2605.15202",
+      "pdf": "https://arxiv.org/pdf/2605.15202",
+      "date": "2026-05-19_AI_enhanced_Chinese",
+      "md": "data/articles/2605.15202v1.md"
+    }
+  ]
+}
