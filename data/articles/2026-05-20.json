@@ -3,6 +3,34 @@
   "_order": "newest first (by arXiv id desc)",
   "articles": [
     {
+      "id": "2605.20185v1",
+      "arxiv_id": "2605.20185",
+      "headline": "衣服飄起來不該被身體模板綁死：PiG-Avatar 讓數位人偶長出真正的「裙擺與外套」",
+      "hook": "現有的高斯點雲虛擬人偶把每個點黏在「身體模板表面」上,所以長裙、大衣、層疊衣物總是貼在皮膚上;PiG-Avatar 改用「神經場引導 + 自由錨點」的設計,讓衣服的幾何脫離身體表面、長到該長的地方去,在多項基準上達到目前最佳的渲染品質,並可即時繪製。",
+      "category_label": "電腦圖學・3D 人物重建",
+      "importance": "中",
+      "authors": "Julian Kaltheuner、Jan Spindler、Sina Kitz、Patrick Stotko、Reinhard Klein",
+      "affiliations": "德國波昂大學",
+      "url": "https://arxiv.org/abs/2605.20185",
+      "pdf": "https://arxiv.org/pdf/2605.20185",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20185v1.md"
+    },
+    {
+      "id": "2605.20183v1",
+      "arxiv_id": "2605.20183",
+      "headline": "會「拍片」的 AI 該怎麼打分數?第一個多鏡頭影音生成評測平台 MSAVBench",
+      "hook": "Sora 2、Wan 2.7 這類能拍出「多鏡頭、有配音」短片的 AI 越來越強,但市面上沒有一套能完整、可靠地評估它們的測試;這篇提出 **MSAVBench**,涵蓋影像、聲音、鏡頭、參考四大面向、含多達 15 個鏡頭的範例,並用 19 個前沿系統實測,發現大家在「導演級控制」與「音畫對位」上仍離真正可用很遠。",
+      "category_label": "電腦視覺・影音生成評測",
+      "importance": "中",
+      "authors": "Yujie Wei、Yujin Han、Zhekai Chen、Yongming Li、Kaixun Jiang、Zhihang Liu等",
+      "affiliations": "復旦大學、香港大學、阿里巴巴通義實驗室、浙江大學、北京大學",
+      "url": "https://arxiv.org/abs/2605.20183",
+      "pdf": "https://arxiv.org/pdf/2605.20183",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20183v1.md"
+    },
+    {
       "id": "2605.20182v1",
       "arxiv_id": "2605.20182",
       "headline": "腦電圖的「思想原子」：用60毫秒的大腦快照，通吃三種神經任務",
@@ -15,6 +43,34 @@
       "pdf": "https://arxiv.org/pdf/2605.20182",
       "date": "2026-05-20",
       "md": "data/articles/2605.20182v1.md"
+    },
+    {
+      "id": "2605.20177v1",
+      "arxiv_id": "2605.20177",
+      "headline": "視覺模型答不出題,常常不是「想得不夠」而是「沒看仔細」:分階段訓練讓 AI 先看再想",
+      "hook": "大家都以為視覺語言模型在看圖題上落敗是「推理不夠長」,這篇用一系列實驗證明真正瓶頸是「**沒看清楚圖**」,並提出「先學感知、再學推理」的分階段訓練法,讓模型推理長度縮短 20.8% 同時答對率反升 1.5%。",
+      "category_label": "電腦視覺・大型多模態模型",
+      "importance": "中",
+      "authors": "Juncheng Wu、Hardy Chen、Haoqin Tu、Xianfeng Tang、Freda Shi、Hui Liu等",
+      "affiliations": "加州大學聖塔克魯茲、亞馬遜、滑鐵盧大學",
+      "url": "https://arxiv.org/abs/2605.20177",
+      "pdf": "https://arxiv.org/pdf/2605.20177",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20177v1.md"
+    },
+    {
+      "id": "2605.20174v1",
+      "arxiv_id": "2605.20174",
+      "headline": "圖片到底有沒有被改過?波士頓大學釋出 53 萬張 AI 改圖樣本,要訓練「圖片測謊器」",
+      "hook": "AI 修圖工具已經能無痕替換圖片中的物件,但要偵測「**哪裡被改了**」的研究數據集太小、太單一;這篇釋出 **AUDITS** 基準資料集——超過 53 萬張用 6 種 AI 工具改過的圖,涵蓋日常與新聞兩種來源、四個分析軸,並系統測試現有偵測模型的弱點。",
+      "category_label": "電腦視覺・偽造影像偵測",
+      "importance": "中",
+      "authors": "Keanu Nichols、Divya Appapogu、Giscard Biamby、Dina Bashkirova、Anna Rohrbach、Bryan A. Plummer",
+      "affiliations": "波士頓大學、加州大學柏克萊分校、德國達姆施塔特工業大學",
+      "url": "https://arxiv.org/abs/2605.20174",
+      "pdf": "https://arxiv.org/pdf/2605.20174",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20174v1.md"
     },
     {
       "id": "2605.20173v1",
@@ -241,6 +297,20 @@
       "md": "data/articles/2605.20086v1.md"
     },
     {
+      "id": "2605.20085v1",
+      "arxiv_id": "2605.20085",
+      "headline": "對機器人說「拿這個放那邊」就好——用框選代替指令的家用機器人新範式",
+      "hook": "與其用語言告訴機器人「拿那個叉子放到右邊的盤子」，這篇論文提出讓使用者直接在第一人稱影像上「框出物體」和「框出要放的位置」，模型就能預測接下來手該怎麼動——他們做了第一個這種設定的資料集 EgoSPT 和模型 SPOT，並證明這個介面在雜亂場景裡比語言更好用。",
+      "category_label": "電腦視覺・機器人操控",
+      "importance": "中",
+      "authors": "Yifan Li、Xinyu Zhou、Yunhao Ge、Yu Kong",
+      "affiliations": "密西根州立大學、NVIDIA Research",
+      "url": "https://arxiv.org/abs/2605.20085",
+      "pdf": "https://arxiv.org/pdf/2605.20085",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20085v1.md"
+    },
+    {
       "id": "2605.20084v1",
       "arxiv_id": "2605.20084",
       "headline": "不是每個問題都需要查資料庫——讓 AI 聰明決定「何時」才啟動搜尋，而且出錯率有保證",
@@ -297,6 +367,20 @@
       "md": "data/articles/2605.20075v1.md"
     },
     {
+      "id": "2605.20073v1",
+      "arxiv_id": "2605.20073",
+      "headline": "用「會傳染」的像素分類器幫心臟血管造影描邊：準確率拿下文獻新高 95.48%",
+      "hook": "心臟血管 X 光造影裡，要把血管從一片灰濛濛的背景裡精確描出來一直很困難——這篇論文把每個像素丟給 Random Forest 分類器判斷「是不是血管」，但加上一個關鍵巧思「分類結果會影響鄰居像素的判斷」（像區域生長），結果在公開資料集上把準確率推到 95.48%，超越目前文獻紀錄。",
+      "category_label": "影像處理・醫學影像",
+      "importance": "中",
+      "authors": "E O Rodrigues、L O Rodrigues、J J Lima、D Casanova、F Favarim、E R Dosciatti等",
+      "affiliations": "巴西 UTFPR、UFF、麻州總醫院 Mass General Brigham 等",
+      "url": "https://arxiv.org/abs/2605.20073",
+      "pdf": "https://arxiv.org/pdf/2605.20073",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20073v1.md"
+    },
+    {
       "id": "2605.20072v1",
       "arxiv_id": "2605.20072",
       "headline": "看得越清楚、反而解謎越差？語言模型的感知悖論",
@@ -309,6 +393,20 @@
       "pdf": "https://arxiv.org/pdf/2605.20072",
       "date": "2026-05-20",
       "md": "data/articles/2605.20072v1.md"
+    },
+    {
+      "id": "2605.20064v1",
+      "arxiv_id": "2605.20064",
+      "headline": "用「畫個畫」的 AI 框架幫醫師自動量心臟脂肪：準確度直逼 99%",
+      "hook": "心臟外面有兩種脂肪（心包外脂肪與縱膈脂肪），都跟心血管疾病風險有關，但人工描出來太花時間。研究者把原本拿來做「畫風轉換」的 pix2pix 條件式生成對抗網路改去做這件事——把 CT 影像「翻譯」成脂肪標記圖，心包外脂肪準確率 99.08%、F1 分數 98.73，且可即時運算。",
+      "category_label": "電腦視覺・醫學影像",
+      "importance": "中",
+      "authors": "Guilherme Santos da Silva、Dalcimar Casanova、Jefferson Tales Oliva、Erick Oliveira Rodrigues",
+      "affiliations": "巴西 UTFPR",
+      "url": "https://arxiv.org/abs/2605.20064",
+      "pdf": "https://arxiv.org/pdf/2605.20064",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20064v1.md"
     },
     {
       "id": "2605.20055v1",
@@ -353,6 +451,20 @@
       "md": "data/articles/2605.20049v1.md"
     },
     {
+      "id": "2605.20044v1",
+      "arxiv_id": "2605.20044",
+      "headline": "給 3D 場景每個「點」加一個雙重身份：在不毀掉畫面美感的前提下做物件辨識",
+      "hook": "3D Gaussian Splatting 是現在流行的「用幾百萬顆雲球體拼出 3D 場景」技術，但這些球球只負責長相、不知道自己屬於哪個物件。研究者讓每顆球同時擁有「視覺存在」與「物件歸屬」兩個獨立的透明度，前者管畫面好不好看、後者管它算不算某個物件——這樣物件分割可以分得乾淨，畫面也不會被破壞。",
+      "category_label": "電腦視覺・3D 場景理解",
+      "importance": "中",
+      "authors": "Guiyu Liu、Niklas Vaara、Janne Mustaniemi、Juho Kannala、Janne Heikkil\\\"a",
+      "affiliations": "赫爾辛基大學、奧盧大學，芬蘭",
+      "url": "https://arxiv.org/abs/2605.20044",
+      "pdf": "https://arxiv.org/pdf/2605.20044",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20044v1.md"
+    },
+    {
       "id": "2605.20037v1",
       "arxiv_id": "2605.20037",
       "headline": "讓 AI 無線電系統「越學越差」的毒藥攻擊：聰明地選擇下毒時機",
@@ -365,6 +477,34 @@
       "pdf": "https://arxiv.org/pdf/2605.20037",
       "date": "2026-05-20",
       "md": "data/articles/2605.20037v1.md"
+    },
+    {
+      "id": "2605.20035v1",
+      "arxiv_id": "2605.20035",
+      "headline": "多模態大模型太貴跑不動？把畫面與聲音的 token 在不同層丟掉不同比例，省 9 倍算力還保 96% 效能",
+      "hook": "能同時看影片、聽聲音、讀文字的「全模態大模型」（Qwen2.5-Omni、Qwen3-Omni）非常吃算力——非文字 token 數量遠遠超過文字。研究者觀察到一個現象：影像和聲音 token 的重要性「在不同層」很不一樣，越往後越冗餘。據此設計了不需要重訓的 token 篩選法 SEATS，**只保留 10% 的視覺與音訊 token，就能達到 9.3× 的 FLOPs 縮減、4.8× 的 prefill 加速，同時保住 96.3% 的原始效能**。",
+      "category_label": "電腦視覺・多模態大型語言模型",
+      "importance": "中",
+      "authors": "Zijie Xin、Jie Yang、Ruixiang Zhao、Tianyi Wang、Fengyun Rao、Jing Lyu等",
+      "affiliations": "中國人民大學、騰訊微信",
+      "url": "https://arxiv.org/abs/2605.20035",
+      "pdf": "https://arxiv.org/pdf/2605.20035",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20035v1.md"
+    },
+    {
+      "id": "2605.20033v1",
+      "arxiv_id": "2605.20033",
+      "headline": "讓 AI 推理時的「兩位裁判」打架反而更準：用納許均衡幫多模態大模型抓錯",
+      "hook": "多模態大模型（吃圖片 + 文字）做多步推理時常常某一步算錯，導致最後答案錯。研究者讓兩個視角不同的「驗證員」針對每一步打分，**用納許均衡的數學框架把它們的「不同意程度」變成有用的訊號**——同意 = 這步應該對，不同意 = 這步要小心。不需要重訓任何模型，在六個基準測試上比基線進步 2.4% ~ 5.2%。",
+      "category_label": "多模態推理・賽局理論",
+      "importance": "中",
+      "authors": "Rohit Sinha、Kunal Tilaganji、Tanuja Ganu、Nagarajan Natarajan、Amit Sharma、Vineeth N. Balasubramanian",
+      "affiliations": "微軟研究院 + 印度理工學院海德拉巴分校",
+      "url": "https://arxiv.org/abs/2605.20033",
+      "pdf": "https://arxiv.org/pdf/2605.20033",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20033v1.md"
     },
     {
       "id": "2605.20025v1",
@@ -393,6 +533,20 @@
       "pdf": "https://arxiv.org/pdf/2605.20023",
       "date": "2026-05-20",
       "md": "data/articles/2605.20023v1.md"
+    },
+    {
+      "id": "2605.20016v1",
+      "arxiv_id": "2605.20016",
+      "headline": "抖音、Reels 短影片畫質怎麼自動評分？用「頻率訊號」幫 AI 看出壓縮瑕疵",
+      "hook": "短影音（抖音 / Reels / Shorts）的畫質評分一直比長片更難——拍攝、剪輯、特效、轉碼疊在一起產生混合瑕疵。研究者把影片的「頻率域」訊號（亮暗變化的快慢）拿來指引 AI，告訴它「哪裡有 ringing、blur、blockiness 這類壓縮瑕疵」，再加上 CLIP 視覺骨幹，做出比過去更準、推論更快的短影音畫質評估模型 FGSVQA。",
+      "category_label": "影像處理・電腦視覺",
+      "importance": "中",
+      "authors": "Xinyi Wang、Angeliki Katsenou、Junxiao Shen、David Bull",
+      "affiliations": "英國 Bristol 大學 視覺資訊實驗室",
+      "url": "https://arxiv.org/abs/2605.20016",
+      "pdf": "https://arxiv.org/pdf/2605.20016",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.20016v1.md"
     },
     {
       "id": "2605.20009v1",
@@ -437,6 +591,20 @@
       "md": "data/articles/2605.19999v1.md"
     },
     {
+      "id": "2605.19995v1",
+      "arxiv_id": "2605.19995",
+      "headline": "動畫師畫的草稿圖，AI 看得懂嗎？訓練「專業導演級 VLM」幫忙生成符合創意意圖的影片",
+      "hook": "用 AI 生影片在「文字寫得很細」時很強，但給它動畫師畫的草稿（storyboard sketch、黏土模型 clay render）這類稀疏抽象的指引時就崩——既有方法不是看不懂、就是把人物臉認錯、就是直接畫風漂走。研究者用真實動畫產線的資料訓了一個專門做「理解創作意圖」的 VLM（CogVLM），再讓影片生成模型聽它的指揮，整個流程像個「AI 副導演」幫使用者把草圖翻譯成可用影片。",
+      "category_label": "電腦視覺・影片生成",
+      "importance": "中",
+      "authors": "Hongji Yang、Songlian Li、Yucheng Zhou、Xiaotong Zhao、Alan Zhao、Chengzhong Xu等",
+      "affiliations": "澳門大學 + 騰訊 Online-Video BU",
+      "url": "https://arxiv.org/abs/2605.19995",
+      "pdf": "https://arxiv.org/pdf/2605.19995",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19995v1.md"
+    },
+    {
       "id": "2605.19988v1",
       "arxiv_id": "2605.19988",
       "headline": "資料庫手冊過時了——讓 AI 自己做實驗找最佳設定",
@@ -451,6 +619,34 @@
       "md": "data/articles/2605.19988v1.md"
     },
     {
+      "id": "2605.19982v1",
+      "arxiv_id": "2605.19982",
+      "headline": "手機在黑暗中拍照雜訊噪到沒救？這篇論文教 AI「先猜光線再修圖」",
+      "hook": "暗光修圖長期卡在「越修越假、顏色跑掉、暗部細節救不回」的問題；這篇研究設計了一條「先理解光線怎麼壞掉、再分區補救」的流水線，並在多個公開資料集上拿到目前最好的數值。",
+      "category_label": "電腦視覺・低光影像增強",
+      "importance": "中",
+      "authors": "Ziqi Wang、Xu Zhang、Laibin Chang、Shi Chen、Jiaqi Ma、Huan Zhang",
+      "affiliations": "武漢大學、澳門大學、MBZUAI、廣東工業大學",
+      "url": "https://arxiv.org/abs/2605.19982",
+      "pdf": "https://arxiv.org/pdf/2605.19982",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19982v1.md"
+    },
+    {
+      "id": "2605.19976v1",
+      "arxiv_id": "2605.19976",
+      "headline": "不靠人工標註，YouTube 教學影片本身就能教 AI 規劃步驟",
+      "hook": "要讓 AI 看影片猜下一步該怎麼做，過去得花錢請人標好「正確步驟」當教材；這篇研究改用一個聰明的招式——拿一百萬支 YouTube 教學影片**當「驗證員」而不是教材**，靠對齊得分當作強化學習的獎勵訊號，繞過了標註瓶頸，並且在七個基準上全面超越過去做法。",
+      "category_label": "電腦視覺・程序性規劃",
+      "importance": "中",
+      "authors": "Luigi Seminara、Antonino Furnari、Lorenzo Torresani",
+      "affiliations": "卡塔尼亞大學、東北大學 Khoury 學院",
+      "url": "https://arxiv.org/abs/2605.19976",
+      "pdf": "https://arxiv.org/pdf/2605.19976",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19976v1.md"
+    },
+    {
       "id": "2605.19975v1",
       "arxiv_id": "2605.19975",
       "headline": "AI 規劃路線時太短視？加個「看兩步棋」的訓練技巧就好了",
@@ -463,6 +659,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19975",
       "date": "2026-05-20",
       "md": "data/articles/2605.19975v1.md"
+    },
+    {
+      "id": "2605.19974v1",
+      "arxiv_id": "2605.19974",
+      "headline": "用文字描述就生出一座可走來走去的 360 度森林：把多顆「全景球」黏成一個 3D 世界",
+      "hook": "過去用 AI 文字生成 3D 場景的方法只能二選一——「看四面八方但走不遠」或「走得遠但只能往前看」；這篇用「多顆 360 度全景球體 + 中間補橋」的方式把兩者結合，第一次同時做到完整環視和長距離漫遊。",
+      "category_label": "電腦視覺・3D 生成",
+      "importance": "中",
+      "authors": "Antoine Schnepf、Karim Kassab、Flavian Vasile、Andrew Comport",
+      "affiliations": "Criteo AI Lab、蔚藍海岸大學 / CNRS / I3S",
+      "url": "https://arxiv.org/abs/2605.19974",
+      "pdf": "https://arxiv.org/pdf/2605.19974",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19974v1.md"
     },
     {
       "id": "2605.19972v1",
@@ -505,6 +715,48 @@
       "pdf": "https://arxiv.org/pdf/2605.19957",
       "date": "2026-05-20",
       "md": "data/articles/2605.19957v1.md"
+    },
+    {
+      "id": "2605.19956v1",
+      "arxiv_id": "2605.19956",
+      "headline": "駭客「動一點點像素」就讓 AI 把吉娃娃看成狼？這篇用「注意力地圖」當盾牌",
+      "hook": "CLIP 這類「看圖認字」的大模型在被惡意干擾（人類看不出來的微小擾動）時，常會把細分類弄錯（例如同樣是狗，認錯品種）；這篇研究用「視覺注意力地圖」當作語意錨點，在測試時引導資料擴增與多視角整合，讓模型在被攻擊時仍能保住正確的辨識區域。",
+      "category_label": "電腦視覺・對抗強健性",
+      "importance": "中",
+      "authors": "Jia-Wei Hai、Yijun Wang、Xiu-Shen Wei",
+      "affiliations": "東南大學",
+      "url": "https://arxiv.org/abs/2605.19956",
+      "pdf": "https://arxiv.org/pdf/2605.19956",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19956v1.md"
+    },
+    {
+      "id": "2605.19950v1",
+      "arxiv_id": "2605.19950",
+      "headline": "教 AI 看影片就「腦補」對方下一刻會怎麼難過，再回頭判斷情緒",
+      "hook": "人類判斷別人情緒時，會本能「預想」對方下一秒可能會怎麼變化（笑會繼續還是僵掉？聲音抖會更抖嗎？）；這篇研究第一次把這個「想像下一刻」的機制塞進大型多模態 AI，讓它在判斷情緒前先預測未來幾秒的語音與畫面，再回頭做判斷，在九個基準上都贏過現有方法。",
+      "category_label": "多模態 AI・情感運算",
+      "importance": "中",
+      "authors": "Bo Zhao、Fanghua Ye、Yixin Ji、Sicheng Zhao、Xiaojiang Peng、Zitong YU",
+      "affiliations": "大灣區大學、騰訊、騰訊、清華大學、深圳技術大學、大灣區大學",
+      "url": "https://arxiv.org/abs/2605.19950",
+      "pdf": "https://arxiv.org/pdf/2605.19950",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19950v1.md"
+    },
+    {
+      "id": "2605.19949v1",
+      "arxiv_id": "2605.19949",
+      "headline": "從幾張無人機鳥瞰圖重建整座城市：把生成式 AI 當「補圖工」而不是「主畫家」",
+      "hook": "用幾張無人機俯拍照片重建一座 3D 城市，過去要嘛重建到屋頂卻牆面糊掉，要嘛靠生成 AI 補但補到「看起來合理但實際亂蓋」；這篇研究把生成 AI 的角色從「主畫家」改成「補圖工」——把它注入到重建管線的內部，只負責補弱觀察區域，明確區分「真看到的」與「想像出來的」，在多個資料集上一致改善重建品質。",
+      "category_label": "電腦視覺・3D 重建",
+      "importance": "中",
+      "authors": "Dongli Wu、Zhuoxiao Li、Tongyan Hua、Yinrui Ren、Xiaobao Wei、Rongjun Qin等",
+      "affiliations": "港科大廣州、北京大學、俄亥俄州立大學",
+      "url": "https://arxiv.org/abs/2605.19949",
+      "pdf": "https://arxiv.org/pdf/2605.19949",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19949v1.md"
     },
     {
       "id": "2605.19945v1",
@@ -661,6 +913,48 @@
       "md": "data/articles/2605.19892v1.md"
     },
     {
+      "id": "2605.19890v1",
+      "arxiv_id": "2605.19890",
+      "headline": "模型上線後要邊用邊學？這篇研究說：先煩惱「記住哪些樣本」比「怎麼學」更重要",
+      "hook": "AI 模型上線後常會碰到「訓練時沒見過的場景」，現在流行讓它「邊跑邊學」(test-time adaptation)；過去大家都在研究「怎麼學的演算法」，這篇研究反過來指出——**「該記哪些樣本來學」的記憶策略才是被忽略的真正關鍵**，並提出一套以「多樣性」為核心的記憶策略，在記憶體小或資料分布偏斜時提升明顯。",
+      "category_label": "機器學習・模型部署",
+      "importance": "中",
+      "authors": "Shyma Alhuwaider、Yasmeen Alsaedy、Merey Ramazanova、Silvio Giancola、Bernard Ghanem",
+      "affiliations": "KAUST 沙烏地阿拉伯阿卜杜拉國王科技大學",
+      "url": "https://arxiv.org/abs/2605.19890",
+      "pdf": "https://arxiv.org/pdf/2605.19890",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19890v1.md"
+    },
+    {
+      "id": "2605.19889v1",
+      "arxiv_id": "2605.19889",
+      "headline": "拍電影調色用的「色彩查找表」可以用「3D 高斯雲」取代，省記憶體又能局部編輯",
+      "hook": "影像、相機、電影調色長期靠「3D 色彩查找表」(3D LUT)做色彩轉換，但表越大越精細也越占記憶體；這篇研究借用「3D 高斯點雲」的想法，把整個 RGB 色彩空間表示成一群可學習的橢球，比現有的神經網路 LUT 更省記憶體、更精確、還能像 Photoshop 一樣局部調某個色域。",
+      "category_label": "電腦圖學・色彩處理",
+      "importance": "中",
+      "authors": "Danna Xue、David Serrano-Lozano、Shaolin Su、Javier Vazquez-Corral",
+      "affiliations": "巴塞隆納自治大學電腦視覺中心",
+      "url": "https://arxiv.org/abs/2605.19889",
+      "pdf": "https://arxiv.org/pdf/2605.19889",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19889v1.md"
+    },
+    {
+      "id": "2605.19876v1",
+      "arxiv_id": "2605.19876",
+      "headline": "文字生 3D 模型常有「兩個臉」的怪症狀，這篇研究找出原因並開了不用重訓的處方",
+      "hook": "用文字生成 3D 模型（如 DreamFusion）很常碰到「Janus 問題」——一隻狗從正面看正常、從背面看竟然又長出一張臉；這篇研究指出根本原因是 2D 擴散模型內建的「正面視角偏好」，並提出 SEGS——一個不用重訓、可隨插即用的取樣引導機制，把 Janus 出錯率平均降低約 10%。",
+      "category_label": "電腦視覺・3D 生成",
+      "importance": "中",
+      "authors": "Qing Zhang、Jinguang Tong、Jing Zhang、Jie Hong、Xuesong Li",
+      "affiliations": "澳洲國立大學、香港大學、澳洲國立大學 / CSIRO",
+      "url": "https://arxiv.org/abs/2605.19876",
+      "pdf": "https://arxiv.org/pdf/2605.19876",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19876v1.md"
+    },
+    {
       "id": "2605.19869v1",
       "arxiv_id": "2605.19869",
       "headline": "讓 AI 當工地安全監察員，每班結束後出一份違規報告",
@@ -673,6 +967,62 @@
       "pdf": "https://arxiv.org/pdf/2605.19869",
       "date": "2026-05-20",
       "md": "data/articles/2605.19869v1.md"
+    },
+    {
+      "id": "2605.19868v1",
+      "arxiv_id": "2605.19868",
+      "headline": "慢性傷口照片 AI 自動分類六種組織：醫生看療程進展不用再「肉眼比對」",
+      "hook": "糖尿病足潰瘍、褥瘡這類慢性傷口的治療要靠精準辨識「肉芽組織」「壞死組織」「肌腱外露」等不同組織，但目前 AI 幾乎都只做「傷口 vs 非傷口」二分；這篇研究設計了一個 Transformer 模型 WoundFormer，把「多視野融合」的細節做對，在六類組織分割上把 Dice 分數推到 81.9%，比同類強模型多 4.3 分。",
+      "category_label": "電腦視覺・醫療影像",
+      "importance": "中",
+      "authors": "Muhammad Ashad Kabir、Rabin Dulal",
+      "affiliations": "澳洲查爾斯史都華大學計算、數學與工程學院",
+      "url": "https://arxiv.org/abs/2605.19868",
+      "pdf": "https://arxiv.org/pdf/2605.19868",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19868v1.md"
+    },
+    {
+      "id": "2605.19866v1",
+      "arxiv_id": "2605.19866",
+      "headline": "給 AI 一張「先畫好的座位表」，它就不會在陌生文件上抓狂跳針",
+      "hook": "把一份 PDF 餵給「視覺語言模型」（VLM）讓它自己讀，碰到沒看過的版型常會整段消失、亂湊結構或無限迴圈跳針；IBM 這組人用一個輕量的版面偵測器先畫好「這頁哪邊是標題、哪邊是表格、哪邊是圖」的草圖塞給模型參考，**markdown F1 從 0.37 直接拉到 0.92**，而且只多耗 15% 的推論時間。",
+      "category_label": "電腦視覺・文件理解",
+      "importance": "中",
+      "authors": "Peter El Hachem、Ahmed Nassar、A. Said Gurbuz、Christoph Auer、Peter W. J. Staar",
+      "affiliations": "ETH Zurich、IBM Research Rüschlikon",
+      "url": "https://arxiv.org/abs/2605.19866",
+      "pdf": "https://arxiv.org/pdf/2605.19866",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19866v1.md"
+    },
+    {
+      "id": "2605.19865v1",
+      "arxiv_id": "2605.19865",
+      "headline": "兩張照片就要猜出相機角度？AI 看到「對稱玩具」就會走錯山谷",
+      "hook": "只給 AI 兩張同個物體的照片要它推算「相機從哪個角度拍的」，目前最先進的方法在「對稱玩具」、「正反差不多的水杯」上常會把方向猜反 180 度，因為它走的下坡路有兩個一樣深的山谷；台大這組人先用一個「分數模型」(score-based model) 把地形重塑成只剩一個正解的方向，再做精修，**用更少次嘗試就達到跟前 SOTA 同等的準確率**。",
+      "category_label": "電腦視覺・三維重建",
+      "importance": "中",
+      "authors": "Yan-Ting Chen、Hao-Wei Chen、Tsu-Ching Hsiao、Chun-Yi Lee",
+      "affiliations": "台灣大學 Elsa Lab",
+      "url": "https://arxiv.org/abs/2605.19865",
+      "pdf": "https://arxiv.org/pdf/2605.19865",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19865v1.md"
+    },
+    {
+      "id": "2605.19859v1",
+      "arxiv_id": "2605.19859",
+      "headline": "「AI 看得懂人在看哪裡嗎？」GPT-5、Gemini、Qwen 通通被請來考視線理解",
+      "hook": "人看誰、看哪裡，是人類社交最基本的訊號之一。Idiap 把目前最強的視覺語言模型（GPT-5、Gemini-3.1-Pro、Qwen3-VL、InternVL3.5、Claude 等）拉出來考「視線追蹤」與「社交視線」（誰在看誰、有沒有對視、有沒有共同注意力），結論很明確——**這些通用 AI 對「人眼睛在看哪」的感知還很弱，連 fine-tune 過後仍贏不過專用視覺模型**。",
+      "category_label": "電腦視覺・人類行為理解",
+      "importance": "中",
+      "authors": "Hengfei Wang、Anshul Gupta、Pierre Vuillecard、Jean-Marc Odobez",
+      "affiliations": "瑞士 Idiap Research Institute",
+      "url": "https://arxiv.org/abs/2605.19859",
+      "pdf": "https://arxiv.org/pdf/2605.19859",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19859v1.md"
     },
     {
       "id": "2605.19856v1",
@@ -715,6 +1065,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19846",
       "date": "2026-05-20",
       "md": "data/articles/2605.19846v1.md"
+    },
+    {
+      "id": "2605.19839v1",
+      "arxiv_id": "2605.19839",
+      "headline": "不用人工標籤教 AI「什麼是好圖」——直接拿真實照片當對照就行",
+      "hook": "訓練 AI 畫圖時，常規做法是請人類標註「兩張 AI 生成圖哪張比較好」當訓練訊號——但兩張都有瑕疵時這種「相對好」訊號很弱。中山大學這組人提出反過來做：**直接拿真實照片當「正面參考」，把 AI 生成的、或刻意劣化過的圖當「負面」**，這樣 512 對訓練樣本就能讓 Stable Diffusion 1.5/3.5 達到跟主流方法相當的效果，而且**完全不用人工標籤**。",
+      "category_label": "電腦視覺・擴散模型",
+      "importance": "中",
+      "authors": "Weiyan Chen、Weijian Deng、Yao Xiao、Weijie Tu、ZiYi Dong、Ibrahim Radwan等",
+      "affiliations": "中山大學、清華大學深圳國際研究生院、澳洲國立大學、坎培拉大學",
+      "url": "https://arxiv.org/abs/2605.19839",
+      "pdf": "https://arxiv.org/pdf/2605.19839",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19839v1.md"
     },
     {
       "id": "2605.19837v1",
@@ -815,6 +1179,20 @@
       "md": "data/articles/2605.19822v1.md"
     },
     {
+      "id": "2605.19821v1",
+      "arxiv_id": "2605.19821",
+      "headline": "教 AI 認表情：先把臉上 68 個關鍵點告訴它，再讓它「跟文字配對」",
+      "hook": "在「自然情境下」（戴口罩、側臉、暗光、被手擋住）讓 AI 認情緒一直很難，常會把注意力放錯地方。這篇把兩件事疊在一起：**把臉部的眼睛、眉毛、嘴唇等「地標點」當幾何提示**，再**用 CLIP 把「驚訝」「快樂」這些情緒詞跟視覺特徵雙向對齊**——在 RAF-DB、FERPlus、AffectNet 三個業界公認的真實 FER 資料集上都拿下 SOTA。",
+      "category_label": "電腦視覺・情感計算",
+      "importance": "中",
+      "authors": "Jiaxin Wang、Muwei Jian、Hui Yu、Junyu Dong、Yifan Xia",
+      "affiliations": "山東大學威海校區、山東財經大學、英國格拉斯哥大學心理學系、中國海洋大學",
+      "url": "https://arxiv.org/abs/2605.19821",
+      "pdf": "https://arxiv.org/pdf/2605.19821",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19821v1.md"
+    },
+    {
       "id": "2605.19815v1",
       "arxiv_id": "2605.19815",
       "headline": "AI 能寫出歐盟法院判例的「法律命題」嗎？研究者設計評分標準，結果好也壞",
@@ -899,6 +1277,20 @@
       "md": "data/articles/2605.19799v1.md"
     },
     {
+      "id": "2605.19797v1",
+      "arxiv_id": "2605.19797",
+      "headline": "評估「AI 看一張照片猜距離」的標準該換了——不需要真實距離當答案",
+      "hook": "「**單目深度估計**」(monocular depth estimation, MDE) 就是 AI 看一張照片猜每個像素離鏡頭多遠，但目前的考試方式都得用 LiDAR 或結構光當「正確答案」，這把考試題目限制在乾淨可量測的場景。捷克 + 斯洛伐克這組人提出 **Depth2Pose**：**不靠真實深度，改用「兩張照片之間相機到底動了多少」當間接證據**——因為 AI 的深度若估得好，反推相機運動就會準。",
+      "category_label": "電腦視覺・三維重建",
+      "importance": "中",
+      "authors": "Viktor Kocur、Sithu Aung、Gabrielle Flood、Yaqing Ding、Lukas Bujnak、Torsten Sattler等",
+      "affiliations": "布拉提斯拉發 Comenius 大學、捷克技術大學 Visual Recognition Group、捷克資訊科技與機器人研究所",
+      "url": "https://arxiv.org/abs/2605.19797",
+      "pdf": "https://arxiv.org/pdf/2605.19797",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19797v1.md"
+    },
+    {
       "id": "2605.19794v1",
       "arxiv_id": "2605.19794",
       "headline": "同步眼球、心跳、聲音：研究「開會時的情緒」需要什麼樣的資料？",
@@ -911,6 +1303,34 @@
       "pdf": "https://arxiv.org/pdf/2605.19794",
       "date": "2026-05-20",
       "md": "data/articles/2605.19794v1.md"
+    },
+    {
+      "id": "2605.19792v1",
+      "arxiv_id": "2605.19792",
+      "headline": "拆 AI 看圖認物的「腦回路」：只有極少數注意力頭在管定位這件事",
+      "hook": "你問 ChatGPT-Vision「貓在圖片裡哪個座標」、它真的能用像素座標回答——但模型內部到底怎麼「知道」物體位置？這篇用機械可解釋性 (mechanistic interpretability) 工具拆開 LLaVA-1.5 和 InternVL-3.5 兩款主流視覺語言模型，發現定位是靠**「容器化」(containerization) 機制**：物體周圍的視覺 token 形成一個「邊界框」，**裡面的語意排列其實不太重要**。而且**只有極少數的注意力頭真正在做這件事**，而且分類與定位用的頭幾乎不重疊。",
+      "category_label": "電腦視覺・機械可解釋性",
+      "importance": "中",
+      "authors": "Timothy Schauml\\\"offel、Martina G. Vilas、Gemma Roig",
+      "affiliations": "德國法蘭克福歌德大學 + Hessian Center for AI",
+      "url": "https://arxiv.org/abs/2605.19792",
+      "pdf": "https://arxiv.org/pdf/2605.19792",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19792v1.md"
+    },
+    {
+      "id": "2605.19786v1",
+      "arxiv_id": "2605.19786",
+      "headline": "把影片變成「會動的 3D 模型」——NVIDIA 把 2 分鐘的工作壓到 9 秒，還不用重新訓練",
+      "hook": "要把一段影片裡的動物或角色變成「會動的 3D 模型」(4D mesh)——以前最強的方法（ActionMesh）需要兩階段網路、每段影片要跑兩分鐘左右。NVIDIA 這組人發現一件事：那兩階段的第一階段（4D 生成擴散模型）**裡面其實已經藏好「哪一幀的哪個點對應到原始模型的哪個點」的資訊**——只要把它讀出來，**不用訓練新模型，9 秒就能搞定，速度 13 倍快、品質還更好、能撐到 16 倍長的影片**。",
+      "category_label": "電腦視覺・三維重建",
+      "importance": "中",
+      "authors": "Dvir Samuel、Yuval Atzmon、Gal Chechik、Yoni Kasten",
+      "affiliations": "NVIDIA Research, Tel-Aviv；Gal Chechik 同時隸屬 Bar-Ilan 大學",
+      "url": "https://arxiv.org/abs/2605.19786",
+      "pdf": "https://arxiv.org/pdf/2605.19786",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19786v1.md"
     },
     {
       "id": "2605.19782v1",
@@ -939,6 +1359,34 @@
       "pdf": "https://arxiv.org/pdf/2605.19779",
       "date": "2026-05-20",
       "md": "data/articles/2605.19779v1.md"
+    },
+    {
+      "id": "2605.19776v1",
+      "arxiv_id": "2605.19776",
+      "headline": "給中國畫評分這件事，靠「打分」還是「兩兩比較」？答案是：兩種都要",
+      "hook": "要教 AI 評估一幅畫好不好看，過去要麼讓專家「打 1–5 分」、要麼讓專家「比兩張哪張好」——這篇證明這兩種方式**各有偏差，但能互補**：兩兩比較對「排序」更穩定，打分對「絕對分數尺度」更可靠。融合兩者得到的「**校正過的專家真值**」，再用同樣的原理教 Qwen3-VL-8B 自蒸餾，在三類中國畫上把評分準確度從 0.504 提升到 0.709，逼近 Gemini-3.1-Pro。",
+      "category_label": "電腦視覺・美學評估",
+      "importance": "中",
+      "authors": "Yuanpei Zhao、Jie Lin、Chao Zhang、Yilin Wang、Mao Li、Chenhui Li等",
+      "affiliations": "四川大學、網易伏羲 AI Lab、華東師範大學",
+      "url": "https://arxiv.org/abs/2605.19776",
+      "pdf": "https://arxiv.org/pdf/2605.19776",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19776v1.md"
+    },
+    {
+      "id": "2605.19771v1",
+      "arxiv_id": "2605.19771",
+      "headline": "教自駕車「不要這樣開」——小米想通了：光教好的不夠，還要教壞的長什麼樣",
+      "hook": "目前主流的「端到端自駕」訓練方式是讓 AI 模仿人類駕駛的軌跡——但「離專家很近的軌跡」不代表「安全」，差幾公分可能就是撞與不撞的差別。小米和中科院這組人提出 **BeyondDrive**：**用 flow matching 生成「貼近專家但會出事」的「困難負樣本」**，讓模型不只學「該怎麼開」也學「不該怎麼開」，在 NAVSIM 閉環基準上把多種主流自駕架構都拉上一個檔次。",
+      "category_label": "機器人・自動駕駛",
+      "importance": "中",
+      "authors": "Junli Wang、Zhihua Hua、Xueyi Liu、Zebin Xing、Haochen Tian、Kun Ma等",
+      "affiliations": "中國科學院自動化所、小米具身智慧團隊、復旦大學",
+      "url": "https://arxiv.org/abs/2605.19771",
+      "pdf": "https://arxiv.org/pdf/2605.19771",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19771v1.md"
     },
     {
       "id": "2605.19769v1",
@@ -1039,6 +1487,20 @@
       "md": "data/articles/2605.19755v1.md"
     },
     {
+      "id": "2605.19750v1",
+      "arxiv_id": "2605.19750",
+      "headline": "教 AI 畫你家的貓，會不會把上週才學的狗忘掉？這篇給了一套解法",
+      "hook": "研究者讓一種新的「逐層放大」式 AI 畫圖模型，能像人一樣**邊用邊學新東西又不忘舊的**，還能把使用者教過的好幾個寵物、物件、畫風組合到同一張圖裡而不會混作一團。",
+      "category_label": "cs.CV",
+      "importance": "中",
+      "authors": "Junhao Li、Xinhao Zhong、Yi sun、Yuxia Qiao、Bin Chen、Shu-Tao Xia等",
+      "affiliations": "哈爾濱工業大學深圳校區、清華大學深圳國際研究生院、鵬城實驗室、華南理工大學",
+      "url": "https://arxiv.org/abs/2605.19750",
+      "pdf": "https://arxiv.org/pdf/2605.19750",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19750v1.md"
+    },
+    {
       "id": "2605.19748v1",
       "arxiv_id": "2605.19748",
       "headline": "讓 AI 學會「吸取教訓」，自動畫出複雜的工業零件",
@@ -1051,6 +1513,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19748",
       "date": "2026-05-20",
       "md": "data/articles/2605.19748v1.md"
+    },
+    {
+      "id": "2605.19744v1",
+      "arxiv_id": "2605.19744",
+      "headline": "自駕車怎麼認出「路上不該出現的東西」？這篇給了個極簡解法：給它一張正常照當對照",
+      "hook": "研究者只給自駕車**一張「正常街景」當參考照片**，就能在真實道路上即時把路面上的怪東西（像是輪胎、充氣玩具、奇怪的物體）圈出來，方法簡單到一頁紙就能寫完，還能裝在德國合法上路的測試車上跑到每秒 12.5 幀。",
+      "category_label": "cs.CV",
+      "importance": "中",
+      "authors": "Albert Schotschneider、Daniel Bogdoll、Svetlana Pavlitska、Ahmed Abouelazm、Johann Marius Zoellner",
+      "affiliations": "FZI 資訊技術研究中心、卡爾斯魯爾理工學院 KIT",
+      "url": "https://arxiv.org/abs/2605.19744",
+      "pdf": "https://arxiv.org/pdf/2605.19744",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19744v1.md"
     },
     {
       "id": "2605.19743v1",
@@ -1067,6 +1543,20 @@
       "md": "data/articles/2605.19743v1.md"
     },
     {
+      "id": "2605.19739v1",
+      "arxiv_id": "2605.19739",
+      "headline": "怎麼讓 AI 畫圖工具「忘記」畫某種東西，又不會把整個模型搞壞？",
+      "hook": "研究者把「讓 AI 畫圖模型不會畫某些不該畫的東西」這件事改寫成「**用獎勵分數來訓練**」的問題，並設計兩條獎勵互相切換的機制——一邊扣分逼它忘掉目標、一邊加分逼它保留其他能力——首次在最新一代「**流匹配**」式畫圖模型（如 Flux）上成功達到這件事。",
+      "category_label": "cs.CV",
+      "importance": "中",
+      "authors": "Yi Sun、Zhiqi Zhang、Xinhao Zhong、Yimin Zhou、Shuoyang Sun、Bin Chen等",
+      "affiliations": "哈爾濱工業大學深圳、清華大學深圳國際研究生院、吉林大學、鵬城實驗室、清華大學",
+      "url": "https://arxiv.org/abs/2605.19739",
+      "pdf": "https://arxiv.org/pdf/2605.19739",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19739v1.md"
+    },
+    {
       "id": "2605.19738v1",
       "arxiv_id": "2605.19738",
       "headline": "社群網路裡的惡意帳號，用拓撲結構描述給 AI 聽就能抓到？",
@@ -1079,6 +1569,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19738",
       "date": "2026-05-20",
       "md": "data/articles/2605.19738v1.md"
+    },
+    {
+      "id": "2605.19737v1",
+      "arxiv_id": "2605.19737",
+      "headline": "把整顆腦袋的 3D MRI 直接在普通筆電瀏覽器裡跑起來，不必上雲、不必昂貴工作站",
+      "hook": "作者把醫院級的 MRI 3D 影像顯示技術，整套搬到瀏覽器裡用內建顯卡跑，**不用上雲、不用 AI、不用昂貴工作站**，從點開到第一張畫面只要不到 1 秒、每秒 82 幀流暢操作，特別適合資源有限的地區醫院。",
+      "category_label": "cs.GR",
+      "importance": "中",
+      "authors": "Oserebameh Augustine Beckley",
+      "affiliations": "拉哥斯州立大學 Lagos State University，奈及利亞",
+      "url": "https://arxiv.org/abs/2605.19737",
+      "pdf": "https://arxiv.org/pdf/2605.19737",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19737v1.md"
     },
     {
       "id": "2605.19735v1",
@@ -1095,6 +1599,20 @@
       "md": "data/articles/2605.19735v1.md"
     },
     {
+      "id": "2605.19734v1",
+      "arxiv_id": "2605.19734",
+      "headline": "衛星拍下的同一架 A330，雷達看和光學看像兩種東西——這篇用「邊緣輪廓」把它們對起來",
+      "hook": "研究者想解決一個衛星圖像的實務難題——同一架飛機或船，**光學衛星**拍到的清晰彩色圖跟**雷達衛星**拍到的散點黑白圖，看起來完全不像；他們改用兩種影像「共有的幾何形狀」做橋樑，配上新一代的 Mamba 視覺模型，讓系統能更可靠地「從一張光學圖找出對應的雷達圖」，並順便釋出了一份新測試資料集。",
+      "category_label": "cs.CV",
+      "importance": "中",
+      "authors": "Tiantong Fang、Xiuwei Wang、Jing Xiao、Wujie Zhou、Liang Liao、Mi Wang",
+      "affiliations": "武漢大學人工智慧學院、浙江科技大學、西安電子科技大學杭州研究院、武漢大學測繪遙感資訊工程國家重點實驗室",
+      "url": "https://arxiv.org/abs/2605.19734",
+      "pdf": "https://arxiv.org/pdf/2605.19734",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19734v1.md"
+    },
+    {
       "id": "2605.19729v1",
       "arxiv_id": "2605.19729",
       "headline": "教小模型學擴散——「先學大概，再修細節」比直接模仿更有效",
@@ -1107,6 +1625,48 @@
       "pdf": "https://arxiv.org/pdf/2605.19729",
       "date": "2026-05-20",
       "md": "data/articles/2605.19729v1.md"
+    },
+    {
+      "id": "2605.19728v1",
+      "arxiv_id": "2605.19728",
+      "headline": "教 AI 拍出無人機真正會做的飛行畫面——加速 5、向左 10、轉身 5 度，請拍給我看",
+      "hook": "現有的 AI 影片生成模型聽得懂「無人機向前衝再向左飄」這種文字描述，但生出來的畫面**對應不了真實飛行的物理感覺**；這篇教模型聽更底層的「**加速度＋角速度**」這種數字指令，讓它生成的無人機影片真正符合命令，且能用來訓練自駕無人機。",
+      "category_label": "cs.CV",
+      "importance": "中",
+      "authors": "Abdul Mohaimen Al Radi、Kunyang Li、Yuzhang Shang、Mubarak Shah、Yu Tian",
+      "affiliations": "中佛羅里達大學人工智慧研究所 UCF",
+      "url": "https://arxiv.org/abs/2605.19728",
+      "pdf": "https://arxiv.org/pdf/2605.19728",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19728v1.md"
+    },
+    {
+      "id": "2605.19727v1",
+      "arxiv_id": "2605.19727",
+      "headline": "在一張坦克照片上點一個輪子，AI 就在 3D 模型上指出對應的位置——這篇怎麼辦到的？",
+      "hook": "研究者讓 AI 不只認得「這張 2D 照片畫的東西跟哪個 3D 模型是同一件物品」，**還能指出 2D 照片上的每一個像素，對應到 3D 模型上的哪一個點**——例如你在照片上的車輪一指，AI 就在 3D 模型的車輪位置標一個紅點。這在過往的 3D 基礎模型上做不到。",
+      "category_label": "cs.CV",
+      "importance": "中",
+      "authors": "Zebin He、Mingxin Yang、Shuhui Yang、Hanxiao Sun、Xintong Han、Chunchao Guo等",
+      "affiliations": "香港科技大學 HKUST、騰訊混元 Tencent Hunyuan",
+      "url": "https://arxiv.org/abs/2605.19727",
+      "pdf": "https://arxiv.org/pdf/2605.19727",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19727v1.md"
+    },
+    {
+      "id": "2605.19726v1",
+      "arxiv_id": "2605.19726",
+      "headline": "想讓 AI 一次讀完一本書？這篇把「逐字看」改成「先看摘要再挑重點」，速度加快近 7 倍",
+      "hook": "研究者把大型語言模型最吃資源的「**注意力計算**」改寫成「**先把整段內容降解析度當摘要、再在摘要上挑重要的部分回頭算細節**」的兩步驟方法，**不必重新訓練**就能讓現有的擴散語言模型在 12.8 萬字超長輸入下加速到 6.95 倍，並維持幾乎不退化的品質。",
+      "category_label": "cs.CV",
+      "importance": "中",
+      "authors": "Wenhu Zhang、Yiming Wu、Huanyu Wang、Yaoyang Liu、Huanzhang Dou、Senqiao Yang等",
+      "affiliations": "香港科技大學、香港大學、浙江大學、香港中文大學",
+      "url": "https://arxiv.org/abs/2605.19726",
+      "pdf": "https://arxiv.org/pdf/2605.19726",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19726v1.md"
     },
     {
       "id": "2605.19723v1",
@@ -1135,6 +1695,62 @@
       "pdf": "https://arxiv.org/pdf/2605.19722",
       "date": "2026-05-20",
       "md": "data/articles/2605.19722v1.md"
+    },
+    {
+      "id": "2605.19717v1",
+      "arxiv_id": "2605.19717",
+      "headline": "讓 AI 設計零件「邊畫邊測力學」：用物理模擬當回饋，AI 才不會畫出看似漂亮卻會斷掉的東西",
+      "hook": "AI 已經會把「設計一個會承重的支架」這種要求變成 3D CAD 模型，但**它只看外觀像不像，根本不知道實際裝上去會不會斷**；研究者把真正的物理模擬器接到 AI 設計流程裡，讓 AI 一邊畫一邊算「應力夠不夠安全」，再修改，再算——做出來的零件變得**比過去複雜 4.2 倍、能編譯（合法可用）的比率多 3.5%**。",
+      "category_label": "cs.CV",
+      "importance": "中",
+      "authors": "Elias Berger、Muhammad Usama、Jan Mehlst\\\"aubl、Bernhard Saske、Kristin Paetzold-Byhain",
+      "affiliations": "慕尼黑",
+      "url": "https://arxiv.org/abs/2605.19717",
+      "pdf": "https://arxiv.org/pdf/2605.19717",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19717v1.md"
+    },
+    {
+      "id": "2605.19712v1",
+      "arxiv_id": "2605.19712",
+      "headline": "用電腦造假「水底聲納照」訓練 AI 找沉船，這篇問了一個被忽略的關鍵問題：造的有多像？",
+      "hook": "訓練 AI 從聲納影像辨識沉船與飛機殘骸需要大量訓練資料，但真實聲納照又貴又敏感，多數研究改用模擬器**合成**；但「**合成的真的像嗎？**」一直沒人嚴格量化，這篇用統計分佈差異直接比對——發現模擬器的**局部紋理**幾乎一致，但**飛機可以、船還差得遠**，因為船的細長造型與長陰影是模擬器目前模擬不準的。",
+      "category_label": "cs.CV",
+      "importance": "中",
+      "authors": "Kamal Basha S、Athira Nambiar",
+      "affiliations": "印度 SRM 科學技術學院 計算智慧系 Department of Computational Intelligence",
+      "url": "https://arxiv.org/abs/2605.19712",
+      "pdf": "https://arxiv.org/pdf/2605.19712",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19712v1.md"
+    },
+    {
+      "id": "2605.19692v1",
+      "arxiv_id": "2605.19692",
+      "headline": "教 AI 像血液病理師那樣描述白血球:不只說「這是單核球」,還要說「液泡有沒有、染色質鬆不鬆」",
+      "hook": "這篇釋出 10,298 張白血球顯微影像,**每一張**都標了 11 個病理師看細胞時會講的形態學特徵(像「細胞質有沒有液泡」、「染色質鬆密」)以及 5 種細胞構造的逐畫素分割圖,讓 AI 不只會分類、還能像醫師那樣解釋「為什麼判斷成這一型」。",
+      "category_label": "cs.CV(電腦視覺)",
+      "importance": "中",
+      "authors": "Satoshi Tsutsui、Winnie Pang、Shuting He、Bihan Wen",
+      "affiliations": "南洋理工大學 ROSE Lab、上海財經大學",
+      "url": "https://arxiv.org/abs/2605.19692",
+      "pdf": "https://arxiv.org/pdf/2605.19692",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19692v1.md"
+    },
+    {
+      "id": "2605.19688v1",
+      "arxiv_id": "2605.19688",
+      "headline": "為什麼偵測文件被竄改的 AI,進到保險公司就失靈?答案藏在 JPEG 的壓縮表裡",
+      "hook": "法國保險公司 MAIF 拿真實業務裡收到的文件,發現市面上各種「文件竄改偵測」AI 在公開基準上表現很好,但實際上線後**把真文件當竄改文件**的誤報率高到不可用——根本原因不是模型架構不好,而是**訓練資料只用了 libjpeg 的標準壓縮品質設定**,沒涵蓋真實世界各種掃描器/手機/PDF 工具產生的非標準壓縮表。",
+      "category_label": "cs.CV(電腦視覺)",
+      "importance": "中",
+      "authors": "Kylian Ronfleux-Corail (L3I)、Guillaume Bernard (L3I)、Micka\\\"el Coustaty (L3I)、Nicolas Sid\\`ere (L3I)",
+      "affiliations": "MAIF、L3i 實驗室、拉羅謝爾大學 L3i 實驗室",
+      "url": "https://arxiv.org/abs/2605.19688",
+      "pdf": "https://arxiv.org/pdf/2605.19688",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19688v1.md"
     },
     {
       "id": "2605.19674v1",
@@ -1205,6 +1821,48 @@
       "pdf": "https://arxiv.org/pdf/2605.19662",
       "date": "2026-05-20",
       "md": "data/articles/2605.19662v1.md"
+    },
+    {
+      "id": "2605.19656v1",
+      "arxiv_id": "2605.19656",
+      "headline": "把 Google Maps 衛星圖塞給 3D 重建模型,街景照拍到的盲區也能補完",
+      "hook": "研究團隊讓 3D 重建模型**同時吃地面街景照和對應的衛星圖**,讓 AI 在地面相機拍不到的死角(屋頂、車輛後方、巷子轉角)也能合理生成出可信的 3D 結構。",
+      "category_label": "cs.CV(電腦視覺)",
+      "importance": "中",
+      "authors": "Matias Turkulainen、Akshay Krishnan、Filippo Aleotti、Mohamed Sayed、Guillermo Garcia-Hernando、Juho Kannala等",
+      "affiliations": "Aalto 大學、Georgia Tech、Niantic Spatial、UCL",
+      "url": "https://arxiv.org/abs/2605.19656",
+      "pdf": "https://arxiv.org/pdf/2605.19656",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19656v1.md"
+    },
+    {
+      "id": "2605.19649v1",
+      "arxiv_id": "2605.19649",
+      "headline": "沒有衛星的 CAD 設計圖也能訓練 AI 認它:幾十張真實照片,靠 NeRF 補出幾千張",
+      "hook": "過去訓練「太空中 AI 辨認衛星姿態」需要幾萬張用 CAD 圖渲染的合成影像,**問題是很多目標衛星根本沒有公開的 CAD**——這篇用 25~400 張真實照片訓練 NeRF(神經輻射場),再從 NeRF 生出大量不同視角和光照的影像來訓練姿態估計網路,**完全不需要 CAD 設計圖**。",
+      "category_label": "cs.CV(電腦視覺)",
+      "importance": "中",
+      "authors": "Antoine Legrand、Renaud Detry、Christophe De Vleeschouwer",
+      "affiliations": "UCLouvain、魯汶大學 KU Leuven、Aerospacelab",
+      "url": "https://arxiv.org/abs/2605.19649",
+      "pdf": "https://arxiv.org/pdf/2605.19649",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19649v1.md"
+    },
+    {
+      "id": "2605.19639v1",
+      "arxiv_id": "2605.19639",
+      "headline": "AI 知道圖畫錯了卻不會改:讓「文字轉圖片」變成可以反覆修圖的工作流",
+      "hook": "這篇研究發現,目前各種「**文字轉圖片**(T2I)模型」就算看得出自己生成的圖哪裡錯了,**也說不出該怎麼修**;他們提出 R³-Bench 評測集和 R³-Refiner 強化學習框架,讓多模態大模型學會「推理→反思→修正」這套迭代修圖循環。",
+      "category_label": "cs.CV(電腦視覺)",
+      "importance": "中",
+      "authors": "Junjie Wang、Xinghua Lou、Jason Li、Ye Tian、Keyu Chen、Yulin Li等",
+      "affiliations": "哈爾濱工業大學深圳、中國科技大學、深圳灣實驗室、南洋理工大學、北京大學、中國科學院大學、香港浸會大學、上海交大",
+      "url": "https://arxiv.org/abs/2605.19639",
+      "pdf": "https://arxiv.org/pdf/2605.19639",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19639v1.md"
     },
     {
       "id": "2605.19638v1",
@@ -1291,6 +1949,20 @@
       "md": "data/articles/2605.19619v1.md"
     },
     {
+      "id": "2605.19611v1",
+      "arxiv_id": "2605.19611",
+      "headline": "用「擴散模型」逆向設計微波吸波板：原本要算幾個月的東西，現在 30 秒生一個",
+      "hook": "研究者把 AI 圈當紅的「擴散模型」（就是畫 AI 圖那類技術）改造後拿來設計**微波吸波板的微觀花紋**——只要告訴它「我希望在哪些頻率吸光」，它就會在 30 秒內畫出符合需求的圖案，而傳統方法可能要算幾個月。",
+      "category_label": "影像生成・電磁工程",
+      "importance": "中",
+      "authors": "Vineetha Joy、Jamshed Palai、Satwik Sahoo、Anshuman Kumar、Amit Sethi、Hema Singh",
+      "affiliations": "CSIR 印度國家航太實驗室 電磁中心、BITS Pilani、IIT Bombay",
+      "url": "https://arxiv.org/abs/2605.19611",
+      "pdf": "https://arxiv.org/pdf/2605.19611",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19611v1.md"
+    },
+    {
       "id": "2605.19607v1",
       "arxiv_id": "2605.19607",
       "headline": "AI 為什麼這樣決定？讓「解釋熱圖」從雜訊中清醒過來",
@@ -1303,6 +1975,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19607",
       "date": "2026-05-20",
       "md": "data/articles/2605.19607v1.md"
+    },
+    {
+      "id": "2605.19605v1",
+      "arxiv_id": "2605.19605",
+      "headline": "用 38 萬張空拍照訓練 AI 找「死掉的樹」：迄今最全球的森林死亡資料集開源",
+      "hook": "研究者把全球森林的高解析度空拍照彙整成兩份開放資料集——38.5 萬張訓練圖、25 個全球測站當基準，**第一次能在公分尺度上同時偵測「樹冠覆蓋」和「樹木死亡」**，讓電腦視覺模型有辦法被全球森林公平評比，而不是只在某一塊溫帶森林裡刷分數。",
+      "category_label": "遙感影像・生態監測",
+      "importance": "中",
+      "authors": "Ayushi Sharma、Clemens Mosig、Lukas Drees、Salim Soltani、Janusch Vajna-Jehle、Aaron Sheppard等",
+      "affiliations": "德國 Freiburg 大學感測器地理資訊學講座、瑞士蘇黎世大學 EcoVision Lab、德國萊比錫大學、Washington University in St. Louis",
+      "url": "https://arxiv.org/abs/2605.19605",
+      "pdf": "https://arxiv.org/pdf/2605.19605",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19605v1.md"
     },
     {
       "id": "2605.19604v1",
@@ -1431,6 +2117,62 @@
       "md": "data/articles/2605.19559v1.md"
     },
     {
+      "id": "2605.19556v1",
+      "arxiv_id": "2605.19556",
+      "headline": "讓自駕車「看影片就知道自己怎麼動」：把擴散模型搬進視覺定位",
+      "hook": "作者把畫 AI 圖那類的「擴散模型」改造後拿來解一個老問題——**從兩張連續的影像推斷攝影機自己移動了多少**——並用「**只挑最有用的少數對應點**」這個策略，讓估計在劇烈晃動或低紋理場景下更穩。",
+      "category_label": "電腦視覺・視覺定位",
+      "importance": "中",
+      "authors": "Prateeth Rao",
+      "affiliations": "International Institute of Information Technology, Bangalore",
+      "url": "https://arxiv.org/abs/2605.19556",
+      "pdf": "https://arxiv.org/pdf/2605.19556",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19556v1.md"
+    },
+    {
+      "id": "2605.19554v1",
+      "arxiv_id": "2605.19554",
+      "headline": "為什麼 AI 畫圖總是「太正常」？這篇教模型「往低機率方向跳一下」生出有創意的東西",
+      "hook": "你叫 AI 畫「一張創意的椅子」，它通常給你一張**長得很正常**的椅子。這篇研究診斷出問題在哪——擴散模型天生會往訓練資料的中心收斂，所以「平均」、不會「驚奇」——然後提了個解法：在生成過程中**偷偷加大畫面中央區域的特徵權重**，把模型推向「機率低、但語意還說得通」的角落，逼它畫出真正有創意的東西。",
+      "category_label": "影像生成・擴散模型",
+      "importance": "中",
+      "authors": "Yue Yu、Haibo Chen、Shuo Chen、Jian Yang、Jun Li",
+      "affiliations": "南京理工大學、南京大學",
+      "url": "https://arxiv.org/abs/2605.19554",
+      "pdf": "https://arxiv.org/pdf/2605.19554",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19554v1.md"
+    },
+    {
+      "id": "2605.19551v1",
+      "arxiv_id": "2605.19551",
+      "headline": "把照片變成「設計師能直接編輯的 SVG」：賓士工程師教 AI 學會「放對控制點」",
+      "hook": "把點陣圖（如 PNG）轉成可任意縮放的 SVG 向量圖是老問題；現有工具不是**點太多難編輯**就是**形狀走樣**。這篇研究指出關鍵在「**怎麼放控制點（anchor）**」——他們訓練了一個模型專門預測「**控制點該在哪**」，再把這些點組成貝茲曲線，做出既忠於原圖又**好編輯**的 SVG。",
+      "category_label": "電腦圖學・向量化",
+      "importance": "中",
+      "authors": "Mengnan Jiang、Christian Franke、Michele Franco Adesso、Antonio Haas、Grace Li Zhang",
+      "affiliations": "Mercedes-Benz AG 賓士汽車、達姆施塔特工業大學",
+      "url": "https://arxiv.org/abs/2605.19551",
+      "pdf": "https://arxiv.org/pdf/2605.19551",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19551v1.md"
+    },
+    {
+      "id": "2605.19539v1",
+      "arxiv_id": "2605.19539",
+      "headline": "3D 重建模型「太有自信」會出大事：這篇給它一個能誠實說「我不確定」的能力",
+      "hook": "現代「**從幾張照片直接吐 3D 點雲**」的 AI 模型（如 DUSt3R、MASt3R）效能驚人，但它們的「**信心分數**」其實是拍腦袋給的——常常**錯得最離譜的地方反而最有自信**。這篇用統計學中的「**證據式不確定性**」框架重做信心估計，讓模型能誠實標出「**我這塊真的不太確定**」，在 ScanNet++ 上把高信心失誤的比例壓低一半以上。",
+      "category_label": "3D 重建・不確定性",
+      "importance": "中",
+      "authors": "Zihao Zhu、Wenyuan Zhao、Nuo Chen、Chao Tian、Zhiwen Fan",
+      "affiliations": "Texas A&M University 電機與電腦工程系",
+      "url": "https://arxiv.org/abs/2605.19539",
+      "pdf": "https://arxiv.org/pdf/2605.19539",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19539v1.md"
+    },
+    {
       "id": "2605.19538v1",
       "arxiv_id": "2605.19538",
       "headline": "訓練 AI 破解驗證碼：這件事比想像中難得多",
@@ -1443,6 +2185,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19538",
       "date": "2026-05-20",
       "md": "data/articles/2605.19538v1.md"
+    },
+    {
+      "id": "2605.19533v1",
+      "arxiv_id": "2605.19533",
+      "headline": "訓練神經網路的「省力魔術」：把相鄰兩層「融合」出一個新層，丟掉中間那層也不會變笨",
+      "hook": "神經網路越深越強，但**訓練成本爆炸**。觀察到相鄰層常常學一樣的東西，作者提了個「**Replacement Learning（替換式學習）**」：訓練時挑幾層「拿掉」，但**不是直接刪掉**——而是用前後兩層的參數「融合」出一個小型代理層放在中間。在多個視覺任務上，這招能省參數、省記憶體、省訓練時間，效果還不輸完整訓練。",
+      "category_label": "深度學習・訓練效率",
+      "importance": "中",
+      "authors": "Yuming Zhang、Peizhe Wang、Tianyang Han、Hengyu Shi、Junhao Su、Dongzhi Guan等",
+      "affiliations": "香港大學、東南大學、獨立研究者",
+      "url": "https://arxiv.org/abs/2605.19533",
+      "pdf": "https://arxiv.org/pdf/2605.19533",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19533v1.md"
     },
     {
       "id": "2605.19529v1",
@@ -1459,6 +2215,20 @@
       "md": "data/articles/2605.19529v1.md"
     },
     {
+      "id": "2605.19524v1",
+      "arxiv_id": "2605.19524",
+      "headline": "自駕車怎麼學「不要做」的事？這篇論文讓它看碰撞案例反思自己",
+      "hook": "研究團隊指出大多數自駕系統只看「好的駕駛範例」學開車，等於從沒看過事故就要上路；他們設計了一套訓練流程，讓模型同時看危險駕駛的反例、被迫去想「如果當初這樣做會發生什麼」，最後在模擬碰撞測試上把碰撞率壓到約 3.36%。",
+      "category_label": "機器人學・電腦視覺",
+      "importance": "中",
+      "authors": "Kefei Tian、Yuansheng Lian、Kai Yang、Xiangdong Chen、Shen Li",
+      "affiliations": "同濟大學、清華大學、新加坡國立大學",
+      "url": "https://arxiv.org/abs/2605.19524",
+      "pdf": "https://arxiv.org/pdf/2605.19524",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19524v1.md"
+    },
+    {
       "id": "2605.19523v1",
       "arxiv_id": "2605.19523",
       "headline": "把語言 AI 的技能「移植」進圖文 AI：哪些情況有效、哪些會失敗？",
@@ -1471,6 +2241,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19523",
       "date": "2026-05-20",
       "md": "data/articles/2605.19523v1.md"
+    },
+    {
+      "id": "2605.19522v1",
+      "arxiv_id": "2605.19522",
+      "headline": "兩張長得幾乎一樣的照片，AI 怎麼說出「為什麼這張比較好」？",
+      "hook": "微信團隊在 NTIRE 2026 影像品質比較挑戰中拿到第一名——關鍵是他們發現「判斷哪張比較好」與「解釋為什麼比較好」是兩個能力，硬塞給同一個模型反而兩邊都做不好，所以他們乾脆設計兩個模型分工合作：一個專心比較，一個專心寫評語。",
+      "category_label": "電腦視覺",
+      "importance": "中",
+      "authors": "Xinli Yue、JianHui Sun、Tao Shao、Liangchao Yao、Fan Xia、Yuetang Deng",
+      "affiliations": "微信，騰訊",
+      "url": "https://arxiv.org/abs/2605.19522",
+      "pdf": "https://arxiv.org/pdf/2605.19522",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19522v1.md"
     },
     {
       "id": "2605.19521v1",
@@ -1529,6 +2313,48 @@
       "md": "data/articles/2605.19514v1.md"
     },
     {
+      "id": "2605.19511v1",
+      "arxiv_id": "2605.19511",
+      "headline": "AI 修圖會把版權浮水印「修掉」嗎？這篇論文教模型修圖時順手保住它",
+      "hook": "當你用 Stable Diffusion 之類的 AI 修圖工具修改一張原本帶有隱形浮水印的照片，浮水印很可能在修圖過程中被「順便洗掉」——這篇論文不是再訓練更強的浮水印，而是直接改造修圖工具本身，讓它在做修圖的同時被約束「不能弄丟浮水印」。",
+      "category_label": "電腦視覺・內容認證",
+      "importance": "中",
+      "authors": "Xiaodong Wu、Qi Li、Xiangman Li、Zelin Zhang、Lingshuang Liu、Jianbing Ni",
+      "affiliations": "加拿大 Queen's 大學、滑鐵盧大學",
+      "url": "https://arxiv.org/abs/2605.19511",
+      "pdf": "https://arxiv.org/pdf/2605.19511",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19511v1.md"
+    },
+    {
+      "id": "2605.19510v1",
+      "arxiv_id": "2605.19510",
+      "headline": "影片版的「跨領域辨識」也能做得很簡單——只要兩個損失函數，做一個減法",
+      "hook": "要讓動作辨識模型從「乾淨資料」轉到「真實場景」工作（這叫「無監督影片領域適應」），近年論文越做越複雜，動輒五到七個損失函數要調權重；這篇 ICML 2026 論文回頭做了個極簡版本——只用兩個損失，但用一個聰明的「時間減靜態」模組，效果反而比那些複雜方法好。",
+      "category_label": "電腦視覺・遷移學習",
+      "importance": "中",
+      "authors": "Pengfei Wei、Yiqun Sun、Zhiqiang Xu、Yiping Ke、Lawrence B. Hsieh",
+      "affiliations": "Magellan Technology Research Institute、MBZUAI、南洋理工大學",
+      "url": "https://arxiv.org/abs/2605.19510",
+      "pdf": "https://arxiv.org/pdf/2605.19510",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19510v1.md"
+    },
+    {
+      "id": "2605.19506v1",
+      "arxiv_id": "2605.19506",
+      "headline": "AI 看第一人稱影片很慢？這篇用「事件相機」當外掛幫它砍掉八成沒用的畫素",
+      "hook": "當你要讓 AI 處理頭戴攝影機的第一人稱影片（例如室內導航或穿戴式 AR），畫面 token 太多算不動是老問題；研究者發現可以借助一種叫「事件相機」的特殊感測器當輔助訊號，**砍掉 80% 的視覺 token 還能比不砍時更準**，推理速度快 1.89 倍。",
+      "category_label": "電腦視覺",
+      "importance": "中",
+      "authors": "Pengtao Ma、Ziliang Zhou、Ciyu Ruan、Haoyang Wang、Kaiyuan Li、Zihang Gong等",
+      "affiliations": "清華大學深圳國際研究生院、哈工大、香港大學",
+      "url": "https://arxiv.org/abs/2605.19506",
+      "pdf": "https://arxiv.org/pdf/2605.19506",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19506v1.md"
+    },
+    {
       "id": "2605.19503v1",
       "arxiv_id": "2605.19503",
       "headline": "讓遊戲 Boss 走得像個樣子：用強化學習訓練非標準形態機器人的測試場",
@@ -1555,6 +2381,34 @@
       "pdf": "https://arxiv.org/pdf/2605.19501",
       "date": "2026-05-20",
       "md": "data/articles/2605.19501v1.md"
+    },
+    {
+      "id": "2605.19491v1",
+      "arxiv_id": "2605.19491",
+      "headline": "AI 看病理切片像「找寶藏」：先掃整張、再放大可疑區，省下 95% 時間",
+      "hook": "病理切片數位化後是「十億像素級」的巨型圖片，AI 要分析必須先把它切成幾萬塊小區塊一張張看，跑一次就要兩分鐘以上；這篇論文讓 AI 學會像真正的病理醫師那樣「先用低倍鏡掃描，再放大可疑處」，把九成的圖片塊都跳過不看，速度快二十倍但準確率不變。",
+      "category_label": "電腦視覺・醫療影像",
+      "importance": "中",
+      "authors": "Jiusong Ge、Yingkang Zhan、Wenjie Zhao、Di Zhang、Ke Wang、Jiashuai Liu等",
+      "affiliations": "西安交通大學、劍橋大學、A*STAR 高效能運算研究所、月之暗面",
+      "url": "https://arxiv.org/abs/2605.19491",
+      "pdf": "https://arxiv.org/pdf/2605.19491",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19491v1.md"
+    },
+    {
+      "id": "2605.19490v1",
+      "arxiv_id": "2605.19490",
+      "headline": "自駕車要怎麼安全測試？這個團隊讓真車與虛擬世界即時連線，互相影響",
+      "hook": "自駕車真實路測太貴、太危險、又不能重現；純模擬又不夠真實。這篇論文做了一個「混合數位孿生」平台——讓一台真實的自駕車與 CARLA 模擬器透過 5G V2X 即時連線，**虛擬世界發出的方向盤指令真的會驅動實體車的底盤**，整套是「真假混合的閉環控制」。",
+      "category_label": "機器人學・電腦視覺",
+      "importance": "中",
+      "authors": "Kanglong Quan、Zhebing Xia、Linfeng Jiang、Hao Yu、Ziheng Qiao、Dapeng Dong等",
+      "affiliations": "西交利物浦大學",
+      "url": "https://arxiv.org/abs/2605.19490",
+      "pdf": "https://arxiv.org/pdf/2605.19490",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19490v1.md"
     },
     {
       "id": "2605.19485v1",
@@ -1809,6 +2663,48 @@
       "md": "data/articles/2605.19394v1.md"
     },
     {
+      "id": "2605.19393v1",
+      "arxiv_id": "2605.19393",
+      "headline": "醫療 AI 為何「對男生過度診斷、對女生漏診」？問題藏在一顆神經元裡",
+      "hook": "研究團隊發現訓練好的皮膚癌與青光眼分類器內部，**有幾顆「身兼數職」的神經元同時編碼「有病」和「老年男性」**，於是模型對男性／長者偏向「過度診斷」、對女性／年輕人偏向「漏診」；他們提出的小招數叫 NIR，不用任何性別／種族標籤就能把這個偏差壓回去九成以上。",
+      "category_label": "醫療影像・公平性",
+      "importance": "中",
+      "authors": "Abin Shoby、Lyle John Palmer、Nikhil Cherian Kurian",
+      "affiliations": "Australian Institute for Machine Learning, Adelaide University 阿德雷得大學機器學習研究所",
+      "url": "https://arxiv.org/abs/2605.19393",
+      "pdf": "https://arxiv.org/pdf/2605.19393",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19393v1.md"
+    },
+    {
+      "id": "2605.19390v1",
+      "arxiv_id": "2605.19390",
+      "headline": "「她現在在哪？」多模態大模型在 3D 場景裡只能秒答一次，這篇想讓它記住",
+      "hook": "當你連續問「剛剛 0.8 秒投三分球的是誰？接著畫出他從 0.5 秒到 1.2 秒的 3D 軌跡」，多數多模態大模型會在第二個問題就把人「跟丟」；這篇蓋了一個專門考這種「跨輪對話＋3D 軌跡」的基準 **Track4D-Bench**，並設計了一個會「記住目標」的模型 **LMM-Track4D**，在 526 個對話樣本上把軌跡精度大幅拉開。",
+      "category_label": "多模態大模型・4D 動態理解",
+      "importance": "中",
+      "authors": "Chaoyue Li、Yongxue Xu、Jie Feng、Jiayu Ding",
+      "affiliations": "華中科技大學、中山大學、北京航空航天大學、北京大學",
+      "url": "https://arxiv.org/abs/2605.19390",
+      "pdf": "https://arxiv.org/pdf/2605.19390",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19390v1.md"
+    },
+    {
+      "id": "2605.19386v1",
+      "arxiv_id": "2605.19386",
+      "headline": "一段手機影片，就能把娃娃變成可以「揑」的數位分身",
+      "hook": "從一支單視角影片就能還原一個會「被你拉、被你壓」的數位分身——關鍵是這篇不再把整個娃娃當成「同一種材質」，而是先用 DINO 切成語義部位（耳朵 vs 身體 vs 觸手），每個部位查詢自己的材質先驗，再透過一本「**共享材質字典（material codebook）**」讓不同場景下同種材質給出**一致**的物理參數。",
+      "category_label": "電腦視覺・物理模擬",
+      "importance": "中",
+      "authors": "Yang Yang、Yiyan Wang、Zheming Liu、Naoya Iwamoto",
+      "affiliations": "大阪大學、東京大學、日本華為",
+      "url": "https://arxiv.org/abs/2605.19386",
+      "pdf": "https://arxiv.org/pdf/2605.19386",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19386v1.md"
+    },
+    {
       "id": "2605.19382v1",
       "arxiv_id": "2605.19382",
       "headline": "AI 寫動畫程式碼跑得起來，卻常常「空間感一塌糊塗」",
@@ -1821,6 +2717,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19382",
       "date": "2026-05-20",
       "md": "data/articles/2605.19382v1.md"
+    },
+    {
+      "id": "2605.19378v1",
+      "arxiv_id": "2605.19378",
+      "headline": "把語言模型那套 MoE 搬到影片生成，會發生什麼災情？這篇全部解剖給你看",
+      "hook": "DeepSeek、Qwen3 用「**專家混合（MoE）**」把語言模型參數爆量擴展很成功，但同樣手法搬到影片擴散 Transformer 上會卡死——本文用 5B 影片模型實測，發現五種失敗模式：路由飽和、選擇性 deadlock、U 形死亡分布、bfloat16 精度陷阱，並提出 **「功能冗餘假說」** 解釋為什麼。",
+      "category_label": "影片生成・MoE 訓練動力學",
+      "importance": "中",
+      "authors": "Haiying Sha",
+      "affiliations": "獨立研究者",
+      "url": "https://arxiv.org/abs/2605.19378",
+      "pdf": "https://arxiv.org/pdf/2605.19378",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19378v1.md"
     },
     {
       "id": "2605.19377v1",
@@ -1907,6 +2817,34 @@
       "md": "data/articles/2605.19362v1.md"
     },
     {
+      "id": "2605.19360v1",
+      "arxiv_id": "2605.19360",
+      "headline": "用光學透鏡偵測深偽影片：15 支影片一道光打過去就分辨真假",
+      "hook": "UCLA 團隊把深偽（deepfake）影片偵測一半交給「光」來做——影片先被輕量數位前端壓成相位圖樣印在空間光調制器（SLM）上，**15 支影片並排打一道光透過去**，後方光偵測器陣列就直接讀出每支影片是真是假，Celeb-DF 上準確率 97.79%，能耗比純數位低十倍以上。",
+      "category_label": "光學運算・深偽偵測",
+      "importance": "中",
+      "authors": "Parnian Ghapandar Kashani、Shiqi Chen、Aydogan Ozcan",
+      "affiliations": "UCLA 加州大學洛杉磯分校電機與生醫工程，Ozcan 為通訊作者",
+      "url": "https://arxiv.org/abs/2605.19360",
+      "pdf": "https://arxiv.org/pdf/2605.19360",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19360v1.md"
+    },
+    {
+      "id": "2605.19359v1",
+      "arxiv_id": "2605.19359",
+      "headline": "用「教科書圖說」教 AI 看乳房 X 光：標註資料少 10 倍時依然好用",
+      "hook": "他們從**兩本教放射科醫師看片的「乳房 X 光圖譜」(atlas)** 裡撈了 2313 組「圖＋說明文字」當預訓練資料，用 CLIP 風格的對比學習把影像跟說明對齊，再 fine-tune 到 BI-RADS 分類；當標註資料少（只剩 1K 張）時，F1 分數**提升 14%**，標註多時也有 1% 提升——而且 2K 組「圖＋說明」竟然比 2K 張只有標籤的影像還更有用。",
+      "category_label": "醫療影像・視覺語言模型",
+      "importance": "中",
+      "authors": "Halil Ibrahim Gulluk、Olivier Gevaert",
+      "affiliations": "Stanford University 史丹佛大學電機工程系與生醫資訊研究",
+      "url": "https://arxiv.org/abs/2605.19359",
+      "pdf": "https://arxiv.org/pdf/2605.19359",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19359v1.md"
+    },
+    {
       "id": "2605.19355v1",
       "arxiv_id": "2605.19355",
       "headline": "把人類的動作「換裝」到巨型卡通角色身上：動態錨點讓跨身型動作遷移更自然",
@@ -1919,6 +2857,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19355",
       "date": "2026-05-20",
       "md": "data/articles/2605.19355v1.md"
+    },
+    {
+      "id": "2605.19354v1",
+      "arxiv_id": "2605.19354",
+      "headline": "把 MRI 重建變成「下一個字猜什麼」：用 ChatGPT 風格的離散預測重建掃描影像",
+      "hook": "MRI 掃描很慢，加速採樣後重建會「糊掉細節」。這篇把重建問題搬到**離散 codebook 空間**做「**下一個加速倍率的預測**」——像 GPT 從「the cat」猜「sits」，模型從「8 倍加速的潛在 token」猜「4 倍加速的 token」一路猜到完整影像；還搬了 LLM 後訓練的「on-policy 特權蒸餾」技巧，讓老師看完整資料、學生只看欠採樣資料，重建細節明顯銳化。",
+      "category_label": "醫療影像重建・自回歸模型",
+      "importance": "中",
+      "authors": "Yilmaz Korkmaz、Vishal M. Patel",
+      "affiliations": "Johns Hopkins University 約翰霍普金斯大學",
+      "url": "https://arxiv.org/abs/2605.19354",
+      "pdf": "https://arxiv.org/pdf/2605.19354",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19354v1.md"
     },
     {
       "id": "2605.19352v1",
@@ -2047,6 +2999,34 @@
       "md": "data/articles/2605.19321v1.md"
     },
     {
+      "id": "2605.19320v1",
+      "arxiv_id": "2605.19320",
+      "headline": "AI 畫圖總是把字寫成鬼畫符？這個方法不改模型，只「教它打分」",
+      "hook": "把 AI 畫圖時出現的歪字、漏字、缺筆畫拆成「整張圖層級／單字層級／字元層級」三層錯誤，讓一個視覺語言模型幫忙打分，再用這個分數去訓練生成模型——不動原本的模型架構，照樣讓字寫對。",
+      "category_label": "電腦視覺・生成式 AI",
+      "importance": "中",
+      "authors": "Mingxuan Cui、Jingpu Yang、Fengxian Ji、Qian Jiang、Zhecheng Shi、Jiaming Wang等",
+      "affiliations": "MBZUAI、北航、東北大學、香港科大廣州",
+      "url": "https://arxiv.org/abs/2605.19320",
+      "pdf": "https://arxiv.org/pdf/2605.19320",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19320v1.md"
+    },
+    {
+      "id": "2605.19319v1",
+      "arxiv_id": "2605.19319",
+      "headline": "機器人不用「想像連續影片」也能做事——只要會「P 圖」就夠了",
+      "hook": "要叫機器手臂做事,不必訓練一個能「腦補連續影片」的大模型,只要讓它能「P 圖」——把當下畫面 P 成「下一個關鍵時刻應該長什麼樣」,串成幾張關鍵畫面,然後讓另一個小模型把這幾張關鍵畫面之間填出真實動作即可。",
+      "category_label": "電腦視覺・機器人學習",
+      "importance": "中",
+      "authors": "Yiren Song、Yihan Wang、Xiyao Deng、Zhuoran Yan、Mike Zheng Shou",
+      "affiliations": "新加坡國立大學 Show Lab、中南大學",
+      "url": "https://arxiv.org/abs/2605.19319",
+      "pdf": "https://arxiv.org/pdf/2605.19319",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19319v1.md"
+    },
+    {
       "id": "2605.19317v1",
       "arxiv_id": "2605.19317",
       "headline": "擴散模型生成後自我修正：不需要外部評分者就能提升品質",
@@ -2075,6 +3055,62 @@
       "md": "data/articles/2605.19314v1.md"
     },
     {
+      "id": "2605.19307v1",
+      "arxiv_id": "2605.19307",
+      "headline": "多模態 AI 看圖回答問題,真的「看懂了」嗎?他們用「微擾測試」拆給你看",
+      "hook": "多模態大型語言模型(MLLM)在「看圖回答問題」這類任務的 benchmark 上分數很高,但只要把問題換句話說、或對圖片做點小變化,答案就翻盤——研究者借用軟體工程的「**蛻變測試**」概念,系統性地拆出這些隱藏弱點。",
+      "category_label": "電腦視覺・AI 評估",
+      "importance": "中",
+      "authors": "Quanxing Xu、Yuhao Tian、Ling Zhou、Xian Zhong、Xiaohua Huang、Rubing Huang等",
+      "affiliations": "澳門科技大學、武漢理工大學、南京工程學院、清華大學",
+      "url": "https://arxiv.org/abs/2605.19307",
+      "pdf": "https://arxiv.org/pdf/2605.19307",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19307v1.md"
+    },
+    {
+      "id": "2605.19305v1",
+      "arxiv_id": "2605.19305",
+      "headline": "AI 學會在 3D 模型上「畫畫」——而且換一個三角網格也照樣會畫",
+      "hook": "過去 AI 生成模型擅長畫「方塊格子」(像素圖、體素 3D),但 3D 動畫師用的是**三角網格**(mesh),而且每個模型的網格切法都不一樣。這篇論文想出一種叫「**Matérn 雜訊**」的數學配方,讓擴散/流匹配生成模型可以無視「網格怎麼切」直接運作,訓練時用 9 千個三角形的網格,推論時可以直接套到 10 萬個三角形上。",
+      "category_label": "電腦圖學・電腦視覺・機器學習",
+      "importance": "中",
+      "authors": "Tianshu Kuai、Arman Maesumi、Daniel Ritchie、Noam Aigerman",
+      "affiliations": "蒙特婁大學 & Mila、布朗大學",
+      "url": "https://arxiv.org/abs/2605.19305",
+      "pdf": "https://arxiv.org/pdf/2605.19305",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19305v1.md"
+    },
+    {
+      "id": "2605.19304v1",
+      "arxiv_id": "2605.19304",
+      "headline": "3D 場景重建塞了一堆「冗餘小斑點」?他們用 19 世紀的「運輸理論」清掉九成",
+      "hook": "現在最紅的 3D 重建技術「3D Gaussian Splatting」會丟一堆冗餘的小光斑來填場景,造成檔案巨大、訓練慢。研究者借用 19 世紀就有的數學工具「**最佳運輸理論**」,把這些重複的斑點合併、重新分配,讓場景只用 10% 的斑點數量、訓練快 10 倍,品質還更好。",
+      "category_label": "電腦視覺・電腦圖學",
+      "importance": "中",
+      "authors": "Beizhen Zhao、Sicheng Yu、Ziran Yin、Dongxu Shen、Hao Wang",
+      "affiliations": "香港科技大學廣州",
+      "url": "https://arxiv.org/abs/2605.19304",
+      "pdf": "https://arxiv.org/pdf/2605.19304",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19304v1.md"
+    },
+    {
+      "id": "2605.19301v1",
+      "arxiv_id": "2605.19301",
+      "headline": "持續學新任務的 AI 老是「學了新的忘了舊的」?他們找到了背後的幾何問題",
+      "hook": "大型視覺語言模型(VLM)學新任務時容易「災難性遺忘」(把舊的忘光),現有方法不是替每個任務獨立留模組(參數爆炸),就是按表面視覺相似度共享(常常搬錯)。研究者指出這其實是個**幾何問題**——任務的優化軌跡會落在某個共享的低秩子空間中——並提出 **iGSP**,用隱式梯度子空間投影解決,參數量少 4 成多,效果還更好。",
+      "category_label": "電腦視覺・機器學習",
+      "importance": "中",
+      "authors": "Xuezhi Cui、Dongbo Zhou、Wang Guo、Zeyuan Wang、Ziyu Li、Gaozhi Zhou等",
+      "affiliations": "中南大學 GeoX-Lab 為主",
+      "url": "https://arxiv.org/abs/2605.19301",
+      "pdf": "https://arxiv.org/pdf/2605.19301",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19301v1.md"
+    },
+    {
       "id": "2605.19294v1",
       "arxiv_id": "2605.19294",
       "headline": "機器人 AI 邊算邊動，動作到了但場景已移：延遲容忍訓練解套",
@@ -2087,6 +3123,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19294",
       "date": "2026-05-20",
       "md": "data/articles/2605.19294v1.md"
+    },
+    {
+      "id": "2605.19289v1",
+      "arxiv_id": "2605.19289",
+      "headline": "用 AI 生成的「假照片」訓練 AI——什麼樣的假照片才有用?",
+      "hook": "擴散模型(Stable Diffusion 那種)能畫出超擬真的照片,所以有人嘗試用它生成的「合成照片」來訓練影像分割模型,以省下真實標註成本。但效果一直不穩定。這篇論文找出了答案:**真正有用的合成照片是「場景擁擠 + 每個物件畫得精緻」的那種**;空空蕩蕩、單一主角的合成照片再漂亮,對訓練幫助有限。",
+      "category_label": "電腦視覺",
+      "importance": "中",
+      "authors": "Jinjin Zhang、Xiefan Guo、Yizhou Jin、Nan Zhou、Di Huang",
+      "affiliations": "北京航空航天大學 軟體環境國重實驗室",
+      "url": "https://arxiv.org/abs/2605.19289",
+      "pdf": "https://arxiv.org/pdf/2605.19289",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19289v1.md"
     },
     {
       "id": "2605.19285v1",
@@ -2115,6 +3165,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19283",
       "date": "2026-05-20",
       "md": "data/articles/2605.19283v1.md"
+    },
+    {
+      "id": "2605.19279v1",
+      "arxiv_id": "2605.19279",
+      "headline": "把你腦中的影像「掃」出來:這套 AI 用「腦區分工」思維解碼 fMRI",
+      "hook": "你看一張圖,大腦會有反應;fMRI 可以掃到這個反應。過去 AI 把整張腦掃描攤成一條長向量,粗暴對應到圖像 embedding——這篇論文認為這抹掉了大腦本來的「分工結構」,改用「**腦功能網路為先驗的混合專家模型**」,讓不同腦區當不同專家,既能準確還原看到的影像,還能說出「哪個腦區處理了什麼語意」。",
+      "category_label": "電腦視覺・腦機介面",
+      "importance": "中",
+      "authors": "Yudan Ren、Pengcheng Shi、Zihan Ma、Xiaowei He、Xiao Li",
+      "affiliations": "西北大學 電子信息學院/人工智慧學院,西安",
+      "url": "https://arxiv.org/abs/2605.19279",
+      "pdf": "https://arxiv.org/pdf/2605.19279",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19279v1.md"
     },
     {
       "id": "2605.19266v1",
@@ -2187,6 +3251,20 @@
       "md": "data/articles/2605.19258v1.md"
     },
     {
+      "id": "2605.19256v1",
+      "arxiv_id": "2605.19256",
+      "headline": "蒸餾擴散模型不必再養一個「假分數網路」——讓學生自己當證人",
+      "hook": "把多步擴散模型壓成「幾步就出圖」的快版本(DMD 蒸餾法),傳統做法要額外養一個「假分數網路」當裁判,訓練開銷大。研究者發現:當學生模型本身是「流匹配」(flow-map)結構時,**它的端點偽速度就可以當裁判自己用**——不必再養第三個網路,效果還更好。",
+      "category_label": "電腦視覺・機器學習",
+      "importance": "中",
+      "authors": "Youngjoong Kim、Deokyeong Lee、Jaesik Park",
+      "affiliations": "首爾國立大學、西江大學",
+      "url": "https://arxiv.org/abs/2605.19256",
+      "pdf": "https://arxiv.org/pdf/2605.19256",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19256v1.md"
+    },
+    {
       "id": "2605.19250v1",
       "arxiv_id": "2605.19250",
       "headline": "AI 看圖卻相信錯誤文字：研究者找到「幻覺」裡的內鬥注意力頭",
@@ -2199,6 +3277,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19250",
       "date": "2026-05-20",
       "md": "data/articles/2605.19250v1.md"
+    },
+    {
+      "id": "2605.19247v1",
+      "arxiv_id": "2605.19247",
+      "headline": "讓 AI 設計神經網路:當搜尋空間是「無限大」時,你怎麼避免它瞎找?",
+      "hook": "設計神經網路架構過去要靠人工試錯,有了「神經架構搜尋」(NAS)後 AI 可以幫你試,但傳統 NAS 只在有限模板裡找;新一代 LLM-輔助 NAS 雖然能無限制地生新架構,卻常常瞎逛。研究者把「網路設計的領域知識」**結構化**成樹狀模板,再用三種互補的變異策略,讓 LLM 在開放空間裡有方向地探索。",
+      "category_label": "電腦視覺・神經架構搜尋",
+      "importance": "中",
+      "authors": "Yuiko Sakuma、Masakazu Yoshimura、Marcel Gr\\\"opl、Zitang Sun、Junji Otsuka、Atsushi Irie等",
+      "affiliations": "Sony Group、ETH Zurich",
+      "url": "https://arxiv.org/abs/2605.19247",
+      "pdf": "https://arxiv.org/pdf/2605.19247",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19247v1.md"
     },
     {
       "id": "2605.19243v1",
@@ -2243,6 +3335,20 @@
       "md": "data/articles/2605.19234v1.md"
     },
     {
+      "id": "2605.19230v1",
+      "arxiv_id": "2605.19230",
+      "headline": "AI 看胸部 X 光時其實是在猜年齡：怎麼讓它把「年紀」這個拐杖放下，但又不丟掉有用資訊",
+      "hook": "醫療 AI 在判讀胸部 X 光時，常常偷偷把「年齡」當成猜測捷徑——年輕人就少判病、年長者就多判病。阿德雷德大學這群人提出一個更精細的辦法：不是粗暴地把年齡資訊全部抹掉（那其實會傷害診斷），而是只**拆掉「年齡→困難度」這條線性捷徑**，讓模型不再用年齡走後門，但仍可保留年齡裡頭真正臨床有用的訊息。",
+      "category_label": "醫學影像・公平性",
+      "importance": "中",
+      "authors": "Nikhil Cherian Kurian、Victor Caquilpan Parra、Abin Shoby、Luke Whitbread、Lyle J. Palmer",
+      "affiliations": "Australian Institute for Machine Learning，阿德雷德大學",
+      "url": "https://arxiv.org/abs/2605.19230",
+      "pdf": "https://arxiv.org/pdf/2605.19230",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19230v1.md"
+    },
+    {
       "id": "2605.19229v1",
       "arxiv_id": "2605.19229",
       "headline": "AI 能幫問卷研究「補缺口」嗎？颶風調查的五階段實驗",
@@ -2283,6 +3389,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19227",
       "date": "2026-05-20",
       "md": "data/articles/2605.19227v1.md"
+    },
+    {
+      "id": "2605.19223v1",
+      "arxiv_id": "2605.19223",
+      "headline": "看影片的 AI 能說得頭頭是道，但其實沒看懂——夏威夷大學做了個新標尺戳穿它們",
+      "hook": "現在號稱能看懂影片的多模態大模型（像 Qwen3-VL、VideoLLaMA3 這些），在「總結影片內容」的測驗上表現亮眼，但夏威夷大學這篇 NeurIPS 2026 論文做了一個新評估基準叫 HAVEN，把測驗改成「**要說中哪一秒在發生什麼**」之後，這些模型就現出原形：話講得很順，但根本沒對到畫面。",
+      "category_label": "電腦視覺・多模態評估",
+      "importance": "中",
+      "authors": "Mengqi Shi、Haopeng Zhang",
+      "affiliations": "夏威夷大學瑪諾阿分校",
+      "url": "https://arxiv.org/abs/2605.19223",
+      "pdf": "https://arxiv.org/pdf/2605.19223",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19223v1.md"
     },
     {
       "id": "2605.19220v1",
@@ -2339,6 +3459,48 @@
       "pdf": "https://arxiv.org/pdf/2605.19215",
       "date": "2026-05-20",
       "md": "data/articles/2605.19215v1.md"
+    },
+    {
+      "id": "2605.19214v1",
+      "arxiv_id": "2605.19214",
+      "headline": "醫療 AI 的公平性陷阱：總分一樣高，卻在不同族群上「一邊過度診斷、一邊漏診」",
+      "hook": "醫療 AI 看起來在所有族群「整體成績（AUC）」差不多，但在實際臨床使用的那條判讀門檻上，年輕女性可能被漏診、年長男性卻被過度診斷——這兩種錯誤相反方向會在總分裡互相抵消而被掩蓋。澳洲與 GSK 的研究團隊提出一個新的訓練懲罰項，能同時管理「年齡、性別、種族」三條軸的公平性，且幾乎不犧牲整體準確度。",
+      "category_label": "機器學習・醫療公平性",
+      "importance": "中",
+      "authors": "Nikhil Cherian Kurian、Victor Caquilpan Parra、Abin Shoby、Luke Whitbread、Lauren Oakden-Rayner、Robert Vandersluis等",
+      "affiliations": "阿德雷德大學機器學習研究所、GSK 葛蘭素史克",
+      "url": "https://arxiv.org/abs/2605.19214",
+      "pdf": "https://arxiv.org/pdf/2605.19214",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19214v1.md"
+    },
+    {
+      "id": "2605.19213v1",
+      "arxiv_id": "2605.19213",
+      "headline": "用一支手機在森林裡走一圈就能量出每棵樹的胸徑——普渡大學把昂貴 LiDAR 換成你口袋裡的東西",
+      "hook": "傳統森林清查要嘛靠幾十萬美金的 3D 雷射掃描儀、要嘛靠人工用捲尺一棵棵量。普渡大學提出一個用普通智慧型手機（架在一個簡單的腳架上）走一圈一分鐘的影片，就能把整個圓形樣區內每一棵樹的位置與胸徑量出來，誤差約 1.5–2.3 公分，準確度可媲美傳統人工方法。",
+      "category_label": "電腦視覺・林業遙測",
+      "importance": "中",
+      "authors": "Su Sun、Jui-Cheng Chiu、Nabin Khanal、Songlin Fei、Yingjie Victor Chen",
+      "affiliations": "普渡大學應用與創意計算學院、林業與自然資源系",
+      "url": "https://arxiv.org/abs/2605.19213",
+      "pdf": "https://arxiv.org/pdf/2605.19213",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19213v1.md"
+    },
+    {
+      "id": "2605.19210v1",
+      "arxiv_id": "2605.19210",
+      "headline": "教 AI 在切割影像時記得「圓的東西不該破洞」——亞利桑那州立大學把幾何學塞進神經網路的損失函數",
+      "hook": "許多醫學影像（例如眼底血管、視神經盤）跟人造物體（標誌、零件）形狀本身就是**凸的**——沒有凹陷、沒有破洞。但神經網路在切割這些東西時常常給出歪七扭八、有破洞的結果。這篇提出一個叫 D-Convexity 的損失函數，把「凸性」這個幾何先驗用「擬凹（quasi-concavity）」的概念翻譯成可微分的局部不等式，能直接插進任何分割模型，讓輸出形狀變得規整。",
+      "category_label": "電腦視覺・影像分割",
+      "importance": "中",
+      "authors": "Shengzhe Chen、Hao Yan",
+      "affiliations": "亞利桑那州立大學計算與增強智慧學院",
+      "url": "https://arxiv.org/abs/2605.19210",
+      "pdf": "https://arxiv.org/pdf/2605.19210",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19210v1.md"
     },
     {
       "id": "2605.19207v1",
@@ -2467,6 +3629,20 @@
       "md": "data/articles/2605.19156v1.md"
     },
     {
+      "id": "2605.19155v1",
+      "arxiv_id": "2605.19155",
+      "headline": "你的腦袋只看過幾千張圖卻會認貓認狗——約翰霍普金斯團隊把那條「資料效率原則」搬進深度網路",
+      "hook": "人類視覺系統一輩子看的圖片大概只有幾千萬張，卻能輕鬆學會認物體、辨形狀；GPT-4o 之類的視覺模型卻要靠數十億張影像才能達到差不多的水準。為什麼差這麼多？這篇論文測試一個老想法——「**高效編碼**」（efficient coding，神經元只記錄輸入中最有變化的部分）——並證明：只要每一層網路都遵守這個原則，**完全不用標籤、不用任務、不用反向傳播**，就能長出跟人腦視覺皮層對齊的特徵階層。",
+      "category_label": "電腦視覺・神經科學",
+      "importance": "中",
+      "authors": "Ananya Passi、Brian S. Robinson、Michael F. Bonner",
+      "affiliations": "約翰霍普金斯大學認知科學系、應用物理實驗室",
+      "url": "https://arxiv.org/abs/2605.19155",
+      "pdf": "https://arxiv.org/pdf/2605.19155",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19155v1.md"
+    },
+    {
       "id": "2605.19151v1",
       "arxiv_id": "2605.19151",
       "headline": "AI 代理人應該自己決定，還是問你一聲？用貝氏學習讓這個界線自動校準",
@@ -2549,6 +3725,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19138",
       "date": "2026-05-20",
       "md": "data/articles/2605.19138v1.md"
+    },
+    {
+      "id": "2605.19137v1",
+      "arxiv_id": "2605.19137",
+      "headline": "影片 AI 真的需要看幾十億支影片訓練嗎？荷蘭研究：用「凍結的圖像模型」加一個小時序模組就能打平",
+      "hook": "訓練一個影片大模型動輒需要幾百萬到幾十億支短片，資料與算力成本驚人。但現代的圖像基礎模型（如 DINOv3）已經很會「看一張畫面」了。荷蘭埃因霍溫團隊測試：把圖像模型**完全凍結**、只訓練一個小的「時序記憶模組」處理畫面之間的關係，居然能跟用幾百萬支影片完整訓練出來的影片大模型 RVM 打平——而且省下絕大部分訓練成本。",
+      "category_label": "電腦視覺・基礎模型",
+      "importance": "中",
+      "authors": "Svetlana Orlova、Niccol\\`o Cavagnero、Gijs Dubbelman",
+      "affiliations": "埃因霍溫理工大學",
+      "url": "https://arxiv.org/abs/2605.19137",
+      "pdf": "https://arxiv.org/pdf/2605.19137",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19137v1.md"
     },
     {
       "id": "2605.19133v1",
@@ -2873,6 +4063,20 @@
       "md": "data/articles/2605.19033v1.md"
     },
     {
+      "id": "2605.19032v1",
+      "arxiv_id": "2605.19032",
+      "headline": "你只給一張自拍，AI 就能幫你做一張「隱形面紗」騙過所有人臉辨識——喬治亞理工新作",
+      "hook": "你上傳到社群媒體的自拍，可能被 Clearview AI、PimEyes 這類系統爬走、做臉部辨識追蹤你。喬治亞理工提出 **FaceCloak**：你只需要給它**一張**你的照片，它就會生成一個專屬於你的「隱形面紗」——一個像素級擾動，加到你任何照片上後，人臉辨識模型會把你誤判成別人，但人眼幾乎看不出有改動。",
+      "category_label": "電腦視覺・隱私／對抗式機器學習",
+      "importance": "中",
+      "authors": "Zachary Yahn、Fatih Ilhan、Tiansheng Huang、Selim Tekin、Sihao Hu、Yichang Xu等",
+      "affiliations": "IEEE Fellow、喬治亞理工學院",
+      "url": "https://arxiv.org/abs/2605.19032",
+      "pdf": "https://arxiv.org/pdf/2605.19032",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19032v1.md"
+    },
+    {
       "id": "2605.19031v1",
       "arxiv_id": "2605.19031",
       "headline": "「Kolmogorov-Arnold 網路」用在手腕感測器上為什麼需要混搭傳統神經網路",
@@ -2885,6 +4089,20 @@
       "pdf": "https://arxiv.org/pdf/2605.19031",
       "date": "2026-05-20",
       "md": "data/articles/2605.19031v1.md"
+    },
+    {
+      "id": "2605.19027v1",
+      "arxiv_id": "2605.19027",
+      "headline": "醫療 AI 在實驗室成績亮眼，但給它一張稍微模糊或有金屬偽影的真實影像就崩潰——這篇拿 40 種干擾系統性壓測",
+      "hook": "LLaVA-Med、MedGemma、GPT-4o、SAM-Med2D 這些當紅的醫療基礎模型在「乾淨的標準資料集」上分數都很高，但實際臨床影像有金屬偽影、MRI 偏場、超音波斑點等真實世界雜訊。這篇用 40 種干擾（12 種通用 + 28 種醫療專屬）橫掃八種影像模態與七種模型，發現一個關鍵訊號：**用 LoRA 微調的模型抗干擾力最差**，掉分幾乎是完整微調的兩倍。",
+      "category_label": "醫療 AI・穩健性評估",
+      "importance": "中",
+      "authors": "Xiangxiang Cui、Tianjin Huang、Yifang Wang、Lijie Hu、Lu Yin",
+      "affiliations": "北京師範大學、埃克斯特大學、倫敦大學學院、MBZUAI、薩里大學",
+      "url": "https://arxiv.org/abs/2605.19027",
+      "pdf": "https://arxiv.org/pdf/2605.19027",
+      "date": "2026-05-20",
+      "md": "data/articles/2605.19027v1.md"
     },
     {
       "id": "2605.19010v1",
