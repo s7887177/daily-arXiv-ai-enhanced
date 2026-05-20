@@ -19,6 +19,7 @@ Defaults: cs.AI, astro-ph.CO, econ.EM | 30 min | experiments/rss-watch/
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import signal
@@ -30,6 +31,15 @@ from pathlib import Path
 
 from daily_arxiv_rss.feeds import feed_url, fetch
 from daily_arxiv_rss.state import now_iso
+
+# Item-content hash: everything we'd consider "the paper's RSS record",
+# excluding the guid (which is the key). Catches "same id, abstract/cats
+# changed" — happens when arXiv updates cross-list categories on a paper.
+_ITEM_FIELDS = ["title", "description"]
+_ITEM_FIELDS_NS = [
+    "{http://arxiv.org/schemas/atom}announce_type",
+    "{http://purl.org/dc/elements/1.1/}creator",
+]
 
 DEFAULT_CATS = ["cs.AI", "astro-ph.CO", "econ.EM"]
 DEFAULT_INTERVAL = 30 * 60
@@ -59,16 +69,30 @@ def _log(root: Path, line: str) -> None:
         f.write(line + "\n")
 
 
+def _item_content_hash(it) -> str:
+    """Short hash of an item's content (everything except guid)."""
+    parts = []
+    for f in _ITEM_FIELDS:
+        parts.append((it.findtext(f) or "").strip())
+    for f in _ITEM_FIELDS_NS:
+        parts.append((it.findtext(f) or "").strip())
+    parts.append(",".join(sorted(
+        (c.text or "").strip() for c in it.findall("category") if c.text)))
+    return hashlib.sha256("\x1f".join(parts).encode("utf-8")).hexdigest()[:16]
+
+
 def _parse_channel(xml_bytes: bytes) -> dict:
     rt = ET.fromstring(xml_bytes)
     ch = rt.find("channel")
     items = ch.findall("item")
     guids = []
+    item_hashes: dict[str, str] = {}
     item_pubs = Counter()
     for it in items:
         g = (it.findtext("guid") or "").strip()
         if g:
             guids.append(g)
+            item_hashes[g] = _item_content_hash(it)
         ip = (it.findtext("pubDate") or "").strip()
         if ip:
             item_pubs[ip] += 1
@@ -76,7 +100,9 @@ def _parse_channel(xml_bytes: bytes) -> dict:
             "lastbuilddate": (ch.findtext("lastBuildDate") or "").strip(),
             "items": len(items),
             "guids": guids,
-            "item_pubs": dict(item_pubs)}
+            "item_hashes": item_hashes,
+            "item_pubs": dict(item_pubs),
+            "xml_sha": hashlib.sha256(xml_bytes).hexdigest()[:16]}
 
 
 # ----------------------------- fetch ---------------------------------------
@@ -212,11 +238,34 @@ def _parse_snapshot_file(p: Path) -> dict:
     return info
 
 
+def _classify(prev: dict, cur: dict, added: set, removed: set,
+              updated: list) -> str:
+    """Classify a consecutive-snapshot transition by all observable signals."""
+    if prev["xml_sha"] == cur["xml_sha"]:
+        return "identical"
+    if prev["channel_pubdate"] != cur["channel_pubdate"]:
+        return "pubdate_roll"
+    if not added and not removed and not updated:
+        # bytes differ but no item-set change AND no per-item content change
+        # → only lastBuildDate (or other channel-level metadata) advanced
+        return "metadata_only"
+    total = len(set(prev["guids"]) | set(cur["guids"]))
+    churn = (len(added) + len(removed)) / total if total else 0
+    if churn > 0.30:
+        return "turnover"               # what we saw 5/19 → today's morning
+    return "incremental"                # normal within-window trickle
+
+
 def compute_stats(root: Path) -> dict:
-    """Pure-data analysis of saved snapshots; returns a dict for rendering."""
+    """Pure-data analysis of saved snapshots; returns a dict for rendering.
+
+    Per cat, every consecutive snapshot pair produces an ``event`` with full
+    multi-signal classification (xml_sha, channel_pubdate, lastBuildDate, guid
+    add/remove, per-item content hash). 'identical' transitions are dropped.
+    """
     snap_root = root / "snapshots"
-    out = {"per_cat": {}, "cross_cat_roll_clusters": []}
-    cat_rolls: dict[str, list] = {}
+    out: dict = {"per_cat": {}, "cross_cat_roll_clusters": []}
+    cat_pubrolls: dict[str, list] = {}
     if not snap_root.exists():
         return out
     for cat_dir in sorted(p for p in snap_root.iterdir() if p.is_dir()):
@@ -227,17 +276,44 @@ def compute_stats(root: Path) -> dict:
             continue
         parsed = [_parse_snapshot_file(p) for p in snaps]
 
-        # roll detection (channel pubDate changes)
-        rolls = []
-        prev_cp = None
-        for s in parsed:
-            cp = s["channel_pubdate"]
-            if prev_cp is not None and cp != prev_cp:
-                rolls.append({"ts": s["ts"], "from": prev_cp, "to": cp})
-            prev_cp = cp
-        cat_rolls[cat] = rolls
+        # events: every observed transition with classification
+        events: list[dict] = []
+        kind_counter: Counter = Counter()
+        adds_all: list[int] = []
+        rems_all: list[int] = []
+        for i in range(1, len(parsed)):
+            prev, cur = parsed[i - 1], parsed[i]
+            a = set(prev["guids"]); b = set(cur["guids"])
+            added = b - a; removed = a - b
+            common = a & b
+            updated = [g for g in common
+                       if prev["item_hashes"].get(g)
+                       != cur["item_hashes"].get(g)]
+            kind = _classify(prev, cur, added, removed, updated)
+            kind_counter[kind] += 1
+            adds_all.append(len(added))
+            rems_all.append(len(removed))
+            if kind == "identical":
+                continue                # uninteresting; not in event list
+            events.append({
+                "ts": cur["ts"], "kind": kind,
+                "items": (prev["items"], cur["items"]),
+                "channel_pubdate_changed":
+                    (prev["channel_pubdate"] != cur["channel_pubdate"]),
+                "lastbuilddate_changed":
+                    (prev["lastbuilddate"] != cur["lastbuilddate"]),
+                "guid_added": len(added), "guid_removed": len(removed),
+                "item_updated": len(updated),
+                "from_pubdate": prev["channel_pubdate"],
+                "to_pubdate": cur["channel_pubdate"],
+            })
+            if kind == "pubdate_roll":
+                cat_pubrolls.setdefault(cat, []).append({
+                    "ts": cur["ts"],
+                    "from": prev["channel_pubdate"],
+                    "to": cur["channel_pubdate"]})
 
-        # within-window growth + lifetimes
+        # within-window aggregation (group by channel pubDate)
         by_window: dict[str, list] = defaultdict(list)
         for s in parsed:
             by_window[s["channel_pubdate"]].append(s)
@@ -247,48 +323,39 @@ def compute_stats(root: Path) -> dict:
             for s in group:
                 ids_union.update(s["guids"])
             windows.append({
-                "channel_pubdate": cp,
-                "snapshots": len(group),
+                "channel_pubdate": cp, "snapshots": len(group),
                 "first_ts": group[0]["ts"], "last_ts": group[-1]["ts"],
                 "items_min": min(s["items"] for s in group),
                 "items_max": max(s["items"] for s in group),
                 "items_last": group[-1]["items"],
-                "union_ids": len(ids_union),
-            })
+                "union_ids": len(ids_union)})
 
-        # per-snapshot deltas (added/removed)
-        deltas = []
-        for i in range(1, len(parsed)):
-            a = set(parsed[i - 1]["guids"])
-            b = set(parsed[i]["guids"])
-            deltas.append({"ts": parsed[i]["ts"],
-                           "added": len(b - a), "removed": len(a - b)})
-        if deltas:
-            adds = [d["added"] for d in deltas]
-            rems = [d["removed"] for d in deltas]
-            delta_summary = {"max_add": max(adds), "mean_add": sum(adds) / len(adds),
-                             "max_remove": max(rems),
-                             "mean_remove": sum(rems) / len(rems),
-                             "cycles": len(deltas)}
-        else:
-            delta_summary = None
-
-        # id lifetimes (how many consecutive snapshots an id stays in feed)
+        # id lifetimes
         snap_count: dict[str, int] = defaultdict(int)
         first_seen: dict[str, str] = {}
         for s in parsed:
             for g in s["guids"]:
                 first_seen.setdefault(g, s["ts"])
                 snap_count[g] += 1
-        latest_ids = set(parsed[-1]["guids"]) if parsed else set()
+        latest_ids = set(parsed[-1]["guids"])
         rolled_out = sum(1 for g in first_seen if g not in latest_ids)
         avg_snaps_per_id = (sum(snap_count.values()) / len(snap_count)
                             if snap_count else 0)
 
+        delta_summary = None
+        if adds_all:
+            delta_summary = {
+                "max_add": max(adds_all),
+                "mean_add": sum(adds_all) / len(adds_all),
+                "max_remove": max(rems_all),
+                "mean_remove": sum(rems_all) / len(rems_all),
+                "cycles": len(adds_all)}
+
         out["per_cat"][cat] = {
             "snapshots": len(parsed),
             "first_ts": parsed[0]["ts"], "last_ts": parsed[-1]["ts"],
-            "rolls": rolls,
+            "events": events,
+            "event_kinds": dict(kind_counter),
             "windows": windows,
             "delta": delta_summary,
             "unique_ids_seen": len(first_seen),
@@ -297,23 +364,23 @@ def compute_stats(root: Path) -> dict:
             "avg_snapshots_per_id": round(avg_snaps_per_id, 2),
         }
 
-    # cross-cat roll alignment: cluster rolls happening within ~10 min
+    # cross-cat pubdate-roll alignment (clusters within ~10 min)
     all_rolls = [(cat, r["ts"], r["from"], r["to"])
-                 for cat, rs in cat_rolls.items() for r in rs]
+                 for cat, rs in cat_pubrolls.items() for r in rs]
     all_rolls.sort(key=lambda x: x[1])
-    clusters = []
-    cur: list = []
+    clusters: list = []
+    cur_cluster: list = []
     last_ts = None
     for cat, ts, fr, to in all_rolls:
         if last_ts is None or _ts_delta_minutes(last_ts, ts) <= 10:
-            cur.append((cat, ts, fr, to))
+            cur_cluster.append((cat, ts, fr, to))
         else:
-            if len(cur) >= 2:
-                clusters.append(cur)
-            cur = [(cat, ts, fr, to)]
+            if len(cur_cluster) >= 2:
+                clusters.append(cur_cluster)
+            cur_cluster = [(cat, ts, fr, to)]
         last_ts = ts
-    if len(cur) >= 2:
-        clusters.append(cur)
+    if len(cur_cluster) >= 2:
+        clusters.append(cur_cluster)
     out["cross_cat_roll_clusters"] = [
         {"size": len(c),
          "members": [{"cat": x[0], "ts": x[1], "from": x[2], "to": x[3]}
@@ -339,11 +406,25 @@ def render_stats(s: dict) -> str:
             continue
         lines.append(f"  snapshots         : {c['snapshots']}  "
                      f"({c['first_ts']} → {c['last_ts']})")
-        lines.append(f"  channel pubDate rolls: {len(c['rolls'])}")
-        for r in c["rolls"][:8]:
-            lines.append(f"    {r['ts']}  {r['from']}  →  {r['to']}")
-        if len(c["rolls"]) > 8:
-            lines.append(f"    ... and {len(c['rolls']) - 8} more")
+        ek = c.get("event_kinds") or {}
+        # one-line summary by event kind
+        kind_order = ["identical", "metadata_only", "incremental",
+                      "turnover", "pubdate_roll"]
+        bits = [f"{k}={ek.get(k, 0)}" for k in kind_order if k in ek]
+        lines.append(f"  transitions       : " + "  ".join(bits))
+        events = c.get("events") or []
+        # show last 10 non-identical events
+        if events:
+            lines.append(f"  recent events     : (last {min(10, len(events))} "
+                         f"of {len(events)})")
+            for ev in events[-10:]:
+                pr = "·" if not ev["channel_pubdate_changed"] else "P"
+                br = "·" if not ev["lastbuilddate_changed"] else "B"
+                lines.append(
+                    f"    {ev['ts']}  [{pr}{br}]  {ev['kind']:13s}  "
+                    f"items {ev['items'][0]}→{ev['items'][1]}  "
+                    f"+{ev['guid_added']}/-{ev['guid_removed']}"
+                    f"  updated={ev['item_updated']}")
         lines.append(f"  windows observed  : {len(c['windows'])}")
         for w in c["windows"][-5:]:
             lines.append(
@@ -363,10 +444,10 @@ def render_stats(s: dict) -> str:
         lines.append(f"  rolled out        : {c['rolled_out']}")
         lines.append(f"  avg snaps per id  : {c['avg_snapshots_per_id']}")
     clusters = s.get("cross_cat_roll_clusters") or []
-    lines.append(f"\n=== cross-cat roll alignment "
-                 f"(rolls within 10 min across cats) ===")
+    lines.append(f"\n=== cross-cat pubdate_roll alignment "
+                 f"(within 10 min) ===")
     if not clusters:
-        lines.append("  (no synchronised rolls observed yet)")
+        lines.append("  (no synchronised pubdate rolls observed yet)")
     for c in clusters:
         lines.append(f"  cluster of {c['size']}:")
         for m in c["members"]:
