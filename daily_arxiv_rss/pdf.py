@@ -84,7 +84,13 @@ def download_all(repo_root: str = ".", *,
         if max_ids is not None and len(eligible) >= max_ids:
             break
 
-    for arxiv_id in eligible:
+    total = len(eligible)
+    print(f"pdf: {total} eligible "
+          f"(ok={summary['skipped_existing']}, "
+          f"cooldown={summary['skipped_cooldown']})",
+          file=sys.stderr, flush=True)
+
+    for i, arxiv_id in enumerate(eligible, 1):
         info = status[arxiv_id]
         dest = pdfs_dir / f"{arxiv_id}.pdf"
         info["attempts"] = info.get("attempts", 0) + 1
@@ -110,19 +116,23 @@ def download_all(repo_root: str = ".", *,
             info.pop("retry_after", None)
             summary["ok"] += 1
             summary["fetched_now"] += 1
+            size_kb = dest.stat().st_size // 1024
+            print(f"[{i:4d}/{total}] {arxiv_id}  ok  ({size_kb} KB)",
+                  file=sys.stderr, flush=True)
         else:
             info["status"] = "failed"
             info["last_err"] = last_err or "unknown"
             info["retry_after"] = _retry_after_iso(retry_after_hours)
             summary["failed"] += 1
-            print(f"[warn] pdf failed {arxiv_id}: {last_err}",
-                  file=sys.stderr)
+            print(f"[{i:4d}/{total}] {arxiv_id}  FAIL  {last_err}",
+                  file=sys.stderr, flush=True)
+        # write state after EVERY id so live queries see real progress
+        st.write_pdf_status(status)
         sleep(base_delay)
 
-    st.write_pdf_status(status)
     st.journal({"kind": "pdf", "summary": summary,
                 "eligible": len(eligible)})
-    print(f"PDF summary: {summary}", file=sys.stderr)
+    print(f"PDF summary: {summary}", file=sys.stderr, flush=True)
     return summary
 
 
