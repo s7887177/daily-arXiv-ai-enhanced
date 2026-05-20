@@ -105,7 +105,7 @@ def crawl(categories, repo_root: str = ".", fetcher=None) -> dict:
 def parse_args(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--categories",
-                   default=os.environ.get("CATEGORIES", "cs.CV"))
+                   default=os.environ.get("CATEGORIES", "cs.AI"))
     p.add_argument("--repo-root", default=".")
     ns = p.parse_args(argv)
     ns.categories = [c.strip() for c in ns.categories.split(",") if c.strip()]
