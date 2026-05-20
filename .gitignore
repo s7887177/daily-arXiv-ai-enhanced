@@ -28,3 +28,10 @@ data/rss/
 
 # Per-machine module state (journal, pdf-status, last-fetch, consumer cursors)
 .state/
+
+# Local experiment outputs — keep design notes (README.md) but ignore the data
+experiments/*/snapshots/
+experiments/*/status.json
+experiments/*/daemon.log
+experiments/*/daemon.out
+experiments/*/daemon.pid
