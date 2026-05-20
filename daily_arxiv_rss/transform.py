@@ -1,4 +1,5 @@
 import re
+from email.utils import parsedate_to_datetime
 from daily_arxiv_rss.parse import RawItem
 
 _OAI_PREFIX = "oai:arXiv.org:"
@@ -23,6 +24,21 @@ def _summary(description: str) -> str:
 
 def _authors(dc_creator: str) -> list[str]:
     return [a.strip() for a in dc_creator.split(",") if a.strip()]
+
+
+def _pub_date_yyyymmdd(rfc822: str) -> str:
+    """Parse RFC822 pubDate → YYYY-MM-DD (in the timestamp's own tz).
+
+    arXiv emits pubDates like ``Tue, 19 May 2026 00:00:00 -0400`` — the date is
+    the announcement day as labelled by arXiv (ET-midnight). ``.date()`` of the
+    parsed dt preserves that label without TZ-converting it.
+    """
+    if not rfc822:
+        return ""
+    try:
+        return parsedate_to_datetime(rfc822).strftime("%Y-%m-%d")
+    except (TypeError, ValueError):
+        return ""
 
 
 def build_announce_index(feeds: dict[str, list[RawItem]]) -> dict[str, dict[str, str]]:
@@ -60,6 +76,7 @@ def to_record(item: RawItem) -> dict:
         "title": item.title,
         "comment": None,
         "summary": _summary(item.description),
+        "pub_date": _pub_date_yyyymmdd(item.pub_date),
     }
 
 

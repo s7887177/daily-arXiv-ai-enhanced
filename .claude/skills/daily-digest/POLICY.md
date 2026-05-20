@@ -30,6 +30,16 @@
    每天約有數篇屬此類，屬正常。
 9. **部署**：推 `main` → GitHub Pages；repo 根目錄一定要有 `.nojekyll`；
    **永不**重建 `_config.yml`、**永不**啟用 `.github/workflows/run.yml`。
+10. **論文歸屬日 = 論文自己的 pubDate**（RSS item 上的那個）。同一個 pubDate
+    的 calendar 條目可以**跨多個物理日**慢慢長大——因為 arXiv 會在 24h 內
+    陸續把 cross / replace 補進同一個公告窗。**不要**把今天才看到的論文
+    硬塞到「今天」的 calendar；它屬於它原本的公告日。
+11. **資料源頭模組（RSS）的承諾**：
+    - `data/<pub_date>.jsonl`：只會長大,既有 id 永不消失（append-only-by-id）。
+    - `pdfs/<id>.pdf`：一旦出現就是完整檔（0-byte 會自動偵測重抓）。
+    - `data/rss/<cat>_<fetched-at>.xml`：每次抓的 SOT，永不覆蓋。
+    - `.state/rss/`（per-machine, gitignored）：journal、pdf-status、last-fetch。
+    - 無新內容時 `crawl` 早退（exit 1），artifacts 完全不動。
 
 ---
 

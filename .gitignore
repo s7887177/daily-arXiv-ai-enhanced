@@ -25,3 +25,6 @@ pdfs/
 data/*.jsonl
 data/rss/
 /tmp/
+
+# Per-machine module state (journal, pdf-status, last-fetch, consumer cursors)
+.state/

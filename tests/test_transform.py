@@ -2,11 +2,12 @@ from daily_arxiv_rss.parse import parse_feed
 from daily_arxiv_rss.transform import to_record
 
 
-def test_to_record_maps_all_eight_fields(cs_ai_xml):
+def test_to_record_maps_all_fields(cs_ai_xml):
     items = parse_feed(cs_ai_xml)
     rec = to_record(items[1])  # 2605.15218v1, two categories
     assert set(rec.keys()) == {"id", "categories", "pdf", "abs",
-                               "authors", "title", "comment", "summary"}
+                               "authors", "title", "comment", "summary",
+                               "pub_date"}
     assert rec["id"] == "2605.15218v1"
     assert rec["abs"] == "https://arxiv.org/abs/2605.15218"
     assert rec["pdf"] == "https://arxiv.org/pdf/2605.15218"
@@ -16,6 +17,15 @@ def test_to_record_maps_all_eight_fields(cs_ai_xml):
     assert rec["comment"] is None
     assert rec["summary"].startswith("Large language models deployed")
     assert "Announce Type" not in rec["summary"]
+    assert rec["pub_date"] == "2026-05-18"  # from RSS item's own pubDate
+
+
+def test_pub_date_parsing():
+    from daily_arxiv_rss.transform import _pub_date_yyyymmdd
+    assert _pub_date_yyyymmdd("Tue, 19 May 2026 00:00:00 -0400") == "2026-05-19"
+    assert _pub_date_yyyymmdd("Tue, 19 May 2026 23:00:00 -0400") == "2026-05-19"
+    assert _pub_date_yyyymmdd("") == ""
+    assert _pub_date_yyyymmdd("not-a-date") == ""
 
 
 def test_to_record_strips_oai_prefix_keeps_version(cs_ai_xml):

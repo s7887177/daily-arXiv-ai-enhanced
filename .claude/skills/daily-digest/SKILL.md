@@ -41,23 +41,29 @@ mechanism; POLICY.md describes what the user wants.
 
 ## Procedure
 
-### 1. Crawl + dedup
+### 1. Crawl (probe → early-exit-or-full-crawl → per-pubDate merge)
 ```bash
-OUT=$(uv run python -m daily_arxiv_rss.crawl)      # prints data/<feed-date>.jsonl
-DATE=$(basename "$OUT" .jsonl)                      # e.g. 2026-05-19
-uv run python -m daily_arxiv_rss.dedup --data "$OUT"; echo "dedup exit: $?"
+uv run python -m daily_arxiv_rss.crawl
 ```
-If dedup exit code is `1` (no new content) → tell the user, STOP.
-Exit `2` → report the error, STOP. Exit `0` → continue.
+Exit code: `0` = work done (one or more pubDate jsonls grew), `1` = no-op
+(probe identical to last run; nothing changed), `2` = error.
 
-### 2. Download PDFs (gentle, gitignored)
+On `1` → tell the user "no new content since last fetch" and STOP. On `2` →
+report the error and STOP. Each paper is filed under **its own RSS-item
+pubDate** into `data/<pub_date>.jsonl` (append-only-by-id). SOTs land at
+`data/rss/<cat>_<fetched-at>.xml` (immutable). The journal at
+`.state/rss/journal.jsonl` gets a line. New ids are queued in
+`.state/rss/pdf-status.json`.
+
+### 2. Download PDFs (state-driven, gentle, gitignored)
 ```bash
-uv run python -m daily_arxiv_rss.pdf --data "$OUT" --out-dir pdfs
-find pdfs -name '*.pdf' -size 0 -delete                     # corrupt 0-byte
-uv run python -m daily_arxiv_rss.pdf --data "$OUT" --out-dir pdfs  # refetch
+uv run python -m daily_arxiv_rss.pdf
 ```
-(The bulk downloader's skip-existing does NOT detect 0-byte files; the prune
-+ refetch recovers them. A few may still 429 — handled as "no PDF" in step 3.)
+Reads `.state/rss/pdf-status.json`; downloads `pending` ids; on success
+marks `ok`; on failure marks `failed` with a `retry_after` cool-down. 0-byte
+files are detected and refetched. Persistent failures (e.g. arXiv 429-ing a
+specific id) become an honest "no PDF" in step 3, never invented from
+abstract alone.
 
 ### 3. Process papers as parallel subagent waves
 
@@ -66,14 +72,15 @@ worklists and dispatch a wave of parallel subagents; commit between waves so
 the site fills in incrementally; repeat until none remain.
 
 ```bash
-uv run python -m daily_arxiv_rss.wave --date "$DATE" --wave 100 --per 10
+uv run python -m daily_arxiv_rss.wave --wave 100 --per 10
 ```
-This prunes 0-byte PDFs, then writes `/tmp/digest-wave/agent-NN.jsonl` —
-each is one subagent's worklist (papers with a whole PDF, no article yet,
-newest first). Dispatch one subagent per `agent-NN.jsonl` **in parallel**
-(general-purpose agents; ~10 agents/wave). After each wave: run step 4
-(manifest) + step 5 (commit/push), then re-run the `wave` command and dispatch
-again. Stop when `picked=0`. Skip-if-exists makes the whole loop resumable.
+This prunes 0-byte PDFs, scans every `data/<pub_date>.jsonl`, then writes
+`/tmp/digest-wave/agent-NN.jsonl` — each is one subagent's worklist (papers
+with a whole PDF, no article yet, newest arXiv-id first). Dispatch one
+subagent per `agent-NN.jsonl` **in parallel** (general-purpose agents;
+~10 agents/wave). After each wave: run step 4 (manifest) + step 5
+(commit/push), then re-run the `wave` command and dispatch again. Stop when
+`picked=0`. Skip-if-exists makes the whole loop resumable.
 
 **Each subagent** is given its `agent-NN.jsonl` and these instructions:
 process every record IN ORDER, ONE AT A TIME (fully finish one before the
@@ -133,26 +140,28 @@ d. Write `data/articles/<id>.md` per the **Style guide** below.
 
 ### 4. Manifest + index
 ```bash
-uv run python -m daily_arxiv_rss.manifest --date "$DATE"
+uv run python -m daily_arxiv_rss.manifest
 ```
-Rebuilds `data/articles/<DATE>.json` (newest arXiv id first) from every
-`data/articles/*.md`, joining paper metadata from the jsonl, preserving any
-hand-written entries not in today's crawl, and ensuring `<DATE>` is in
-`data/articles/index.json`. Run after every wave (it is idempotent).
+Rebuilds **every** `data/articles/<pub_date>.json` from every
+`data/articles/*.md`, grouping each article by **its own paper's pub_date**
+(read from `data/<pub_date>.jsonl`). Hand-written seed entries not in any
+jsonl are preserved verbatim. `data/articles/index.json` is regenerated
+with all dates newest-first. Run after every wave (idempotent).
 
 ### 5. Publish
 ```bash
 test -f .nojekyll || touch .nojekyll          # REQUIRED: Pages is Jekyll-built;
 # without .nojekyll, Jekyll strips every data/articles/*.md → 404 online.
 # Never re-add _config.yml. Never enable .github/workflows/run.yml.
-git add .nojekyll data/articles/index.json data/articles/${DATE}.json \
+git add .nojekyll data/articles/index.json data/articles/*.json \
         data/articles/*.md assets/articles/*.webp
-git commit -m "digest: ${DATE} (N articles)"
+git commit -m "digest: $(date -u +%Y-%m-%d) (N articles)"
 git push origin main
 ```
 GitHub Pages redeploys automatically (CDN+browser cache the JSON hard — tell
 the user to hard-refresh, Ctrl+Shift+R). Tell the user the live URL
-`https://<owner>.github.io/<repo>/#${DATE}` and the count.
+`https://<owner>.github.io/<repo>/` (the calendar shows every date that has
+articles) and the per-pubDate counts from step 4.
 
 ## Style guide (every article .md)
 

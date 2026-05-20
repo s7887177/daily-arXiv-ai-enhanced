@@ -1,69 +1,71 @@
 import json
+from pathlib import Path
+
 from daily_arxiv_rss import crawl
 
 
-def test_run_endtoend_with_injected_fetcher(tmp_path, cs_ai_xml, cs_cl_xml):
+def test_crawl_writes_per_pubdate_jsonl(tmp_path, cs_ai_xml, cs_cl_xml):
     feeds_bytes = {"cs.AI": cs_ai_xml, "cs.CL": cs_cl_xml}
     fetched = []
 
-    def fetcher(category):
-        fetched.append(category)
-        return feeds_bytes[category]
+    def fetcher(cat):
+        fetched.append(cat)
+        return feeds_bytes[cat]
 
-    out = tmp_path / "2026-05-18.jsonl"
-    crawl.run(categories=["cs.AI"], out_path=str(out),
-              sot_dir=str(tmp_path / "rss"), yyyymmdd="20260518",
-              fetcher=fetcher)
-    assert "cs.AI" in fetched and "cs.CL" in fetched
-    assert (tmp_path / "rss" / "cs.AI_20260518.xml").exists()
-    assert (tmp_path / "rss" / "cs.CL_20260518.xml").exists()
-    recs = [json.loads(line) for line in out.read_text(encoding="utf-8").splitlines()]
+    res = crawl.crawl(["cs.AI"], repo_root=str(tmp_path), fetcher=fetcher)
+    # fixture items all have pubDate -> 2026-05-18
+    pubdate_file = tmp_path / "data" / "2026-05-18.jsonl"
+    assert pubdate_file.exists()
+    recs = [json.loads(l) for l in pubdate_file.read_text("utf-8").splitlines()]
     assert len(recs) == 3
+    assert {r["pub_date"] for r in recs} == {"2026-05-18"}
+    assert res["status"] == "ok"
+    assert res["records"] == 3
+    assert res["by_pub_date"]["2026-05-18"]["added"] == 3
+    # cross-resolution still picks cs.CL as primary for the cross item
     cross = [r for r in recs if r["id"] == "2605.15202v1"][0]
     assert cross["categories"][0] == "cs.CL"
 
 
-def test_parse_args_defaults(monkeypatch):
-    monkeypatch.setenv("CATEGORIES", "cs.AI, cs.CL")
-    ns = crawl.parse_args(["--out", "data/x.jsonl"])
-    assert ns.out == "data/x.jsonl"
-    assert ns.categories == ["cs.AI", "cs.CL"]
-    assert ns.sot_dir == "data/rss"
+def test_crawl_no_op_on_identical_guid_set(tmp_path, cs_ai_xml):
+    feeds_bytes = {"cs.AI": cs_ai_xml}
+
+    def fetcher(cat):
+        return feeds_bytes[cat]
+
+    crawl.crawl(["cs.AI"], repo_root=str(tmp_path), fetcher=fetcher)
+    res2 = crawl.crawl(["cs.AI"], repo_root=str(tmp_path), fetcher=fetcher)
+    assert res2["status"] == "no_op"
+    journal = (tmp_path / ".state/rss/journal.jsonl").read_text("utf-8")
+    assert journal.count('"status": "ok"') == 1
+    assert journal.count('"status": "no_op"') == 1
 
 
-def test_parse_args_out_optional_defaults_none():
-    ns = crawl.parse_args(["--categories", "cs.AI"])
-    assert ns.out is None
+def test_crawl_append_only_by_id(tmp_path, cs_ai_xml):
+    """Second crawl with overlapping ids must NOT duplicate records."""
+    feeds_bytes = {"cs.AI": cs_ai_xml}
+
+    def fetcher(cat):
+        return feeds_bytes[cat]
+
+    crawl.crawl(["cs.AI"], repo_root=str(tmp_path), fetcher=fetcher)
+    # force a non-no_op second run by clobbering the hash
+    (tmp_path / ".state/rss/last-fetch.json").write_text(
+        '{"cs.AI": {"guid_hash": "stale", "fetched_at": "", "items": 0}}',
+        encoding="utf-8")
+    res2 = crawl.crawl(["cs.AI"], repo_root=str(tmp_path), fetcher=fetcher)
+    assert res2["status"] == "ok"
+    assert res2["by_pub_date"]["2026-05-18"]["added"] == 0   # nothing new
+    recs = (tmp_path / "data/2026-05-18.jsonl").read_text("utf-8").splitlines()
+    assert len(recs) == 3                                    # not duplicated
 
 
-def test_feed_date_from_pubdate(cs_ai_xml):
-    from daily_arxiv_rss.parse import parse_feed
-    assert crawl._feed_date(parse_feed(cs_ai_xml)) == "2026-05-18"
-
-
-def test_feed_date_none_when_unparseable():
-    from daily_arxiv_rss.parse import RawItem
-    bad = [RawItem(guid="g", link="", title="", description="", pub_date="")]
-    assert crawl._feed_date(bad) is None
-
-
-def test_run_default_out_uses_feed_pubdate(tmp_path, monkeypatch, cs_ai_xml, cs_cl_xml):
+def test_crawl_saves_versioned_sot(tmp_path, cs_ai_xml, cs_cl_xml):
     feeds_bytes = {"cs.AI": cs_ai_xml, "cs.CL": cs_cl_xml}
-    monkeypatch.chdir(tmp_path)  # default path is relative: data/<date>.jsonl
-    returned = crawl.run(categories=["cs.AI"], out_path=None,
-                         sot_dir=str(tmp_path / "rss"), yyyymmdd="20260519",
-                         fetcher=lambda c: feeds_bytes[c])
-    expected = tmp_path / "data" / "2026-05-18.jsonl"  # feed pubDate, NOT 0519
-    assert expected.exists()
-    assert returned == "data/2026-05-18.jsonl"  # run() returns the path it wrote
-    assert len(expected.read_text(encoding="utf-8").splitlines()) == 3
-
-
-def test_main_prints_only_path_to_stdout(tmp_path, monkeypatch, capsys, cs_ai_xml, cs_cl_xml):
-    fb = {"cs.AI": cs_ai_xml, "cs.CL": cs_cl_xml}
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("CATEGORIES", "cs.AI")
-    monkeypatch.setattr(crawl, "_default_fetcher", lambda c: fb[c])
-    crawl.main(["--sot-dir", str(tmp_path / "rss")])
-    out = capsys.readouterr().out.strip()
-    assert out == "data/2026-05-18.jsonl"  # stdout = just the path (scripts capture this)
+    crawl.crawl(["cs.AI"], repo_root=str(tmp_path),
+                fetcher=lambda c: feeds_bytes[c])
+    sots = sorted((tmp_path / "data/rss").glob("*.xml"))
+    assert {p.name.split("_")[0] for p in sots} >= {"cs.AI", "cs.CL"}
+    for p in sots:
+        ts = p.stem.split("_", 1)[1]
+        assert len(ts) == 16 and ts.endswith("Z")            # ISO basic UTC

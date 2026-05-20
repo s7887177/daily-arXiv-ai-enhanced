@@ -19,10 +19,13 @@ source .venv/bin/activate
 # 完整本地流程(會偵測環境變數,缺 OPENAI_API_KEY 時可跑部分流程)
 bash run.sh                      # 必須在 repo 根目錄執行
 
-# 單獨執行各階段(注意各自的工作目錄):
-out=$(uv run python -m daily_arxiv_rss.crawl)              # repo 根目錄;省略 --out=data/<feed pubDate>.jsonl;stdout=該路徑
-uv run python -m daily_arxiv_rss.dedup --data "$out"       # 我們自己的去重(吃 feed-date 檔名),退出碼 0/1/2 決定後續
-# run.sh/run.yml 以 $out 串接(STOPGAP,暫時);舊 daily_arxiv/check_stats.py 不再呼叫(死碼)
+# RSS 模組(新模型;見 .claude/skills/daily-digest/POLICY.md)
+uv run python -m daily_arxiv_rss.crawl       # 探子 → 早退 / 全抓 → per-pubDate jsonl;exit 0=有新,1=no-op,2=err
+uv run python -m daily_arxiv_rss.pdf         # 讀 .state/rss/pdf-status.json,下載 pending,失敗有 retry_after
+uv run python -m daily_arxiv_rss.wave --wave 100 --per 10   # 切下一波 subagent 工作清單
+uv run python -m daily_arxiv_rss.manifest    # 用每篇自己的 pub_date 重建 per-pubDate manifest + index.json
+
+# 舊上游 AI 管線(已不再走;留檔)
 cd ai && python enhance.py --data ../data/<date>.jsonl --max_workers 4
 cd to_md && python convert.py --data ../data/<date>_AI_enhanced_<LANGUAGE>.jsonl
 python update_readme.py          # 由 data/*.md 重新產生 README.md
@@ -48,15 +51,21 @@ python update_readme.py          # 由 data/*.md 重新產生 README.md
 ### 雙分支策略
 程式碼在 `main` 分支,**產生的資料檔在獨立的 `data` 分支**(workflow 用 orphan 分支 + 暫存目錄搬運實現)。前端透過 `raw.githubusercontent.com/<owner>/<repo>/data/...` 直接抓資料,使程式碼倉庫不被大量資料檔污染。本地通常只有 `main`;`data` 分支僅存在於遠端。
 
-### 五階段流水線(`.github/workflows/run.yml` 串接,`run.sh` 為本地對應版)
-1. **爬取** `daily_arxiv_rss/`(RSS,取代舊 Scrapy):抓 `rss.arxiv.org/rss/<cat>`,原始 feed 存為 SOT `data/rss/{cat}_YYYYMMDD.xml`,transform 成相同 8 欄位契約輸出 `data/{date}.jsonl`。`id` 改為**帶版本**(`2605.15202v1`)。cross-list 主分類靠跨 feed 比對 `announce_type=new` 還原。舊 `daily_arxiv/`(Scrapy)**保留但不再被呼叫**(`check_stats.py` 仍住在裡面,故保留)。設計/計畫見 `docs/superpowers/specs|plans/2026-05-19-*`。另有手動 PDF 工具 `python -m daily_arxiv_rss.pdf`(本地、不進 CI/git)。
-2. **去重** `daily_arxiv_rss/dedup.py`(取代 `check_stats.py`):與過去 **7 天** 的 ID 比對並就地改寫該檔。**日期取自 `--data` 檔名(feed pubDate),不用機器時鐘**——這是能全程對齊 RSS 日期的關鍵。**退出碼即控制流**:`0`=有新內容繼續、`1`=無新內容停止、`2`=錯誤(與舊版契約相同)。舊 `check_stats.py` 不再被呼叫(`daily_arxiv/` 仍原封不動,該檔變死碼)。
-3. **AI 增強** `ai/enhance.py`:LangChain + `ChatOpenAI.with_structured_output(Structure)`,產生 `Structure`(`ai/structure.py`:tldr/motivation/method/result/conclusion)五欄位。另外解析摘要中的 GitHub 連結補 star/更新日期。對 LLM 解析失敗有多層 fallback(修復 JSON → 部分資料 → 預設佔位值),不會因單篇失敗中斷整批。
-4. **轉 Markdown** `to_md/convert.py`:依分類分組,分類順序按 `CATEGORIES` 偏好排序。輸出 `data/{date}.md`。
-5. **發布**:注入設定後,程式碼推 `main`、資料推 `data`,均含 3 次重試 + rebase。
+### RSS 模組(`daily_arxiv_rss/`)的承諾
+跨檔案才能看懂的是「**每篇論文歸屬日 = 它自己 RSS item 的 pubDate**」這條核心政策,以及伴隨的狀態管理。詳見 `.claude/skills/daily-digest/POLICY.md`(政策)和 `SKILL.md`(機制)。**那兩份是 source of truth**,以下只是地圖:
 
-### 檔案命名約定(階段間靠檔名串接,改一處要全鏈一致)
-`data/{date}.jsonl` → `data/{date}_AI_enhanced_{LANGUAGE}.jsonl` → `data/{date}.md`
+- **`crawl.py`**:探子先抓第一個 cat → GUID set hash 跟 `.state/rss/last-fetch.json` 比 → 一樣就 exit 1(no-op,artifacts 完全不動)。有變才全抓所有 cat + cross feeds。SOT 存 `data/rss/<cat>_<ISO-UTC>.xml`,**永不覆蓋**。每筆 record 帶自己的 `pub_date`,寫進 `data/<pub_date>.jsonl`(append-only-by-id)。新 id 進 `.state/rss/pdf-status.json` 當 `pending`。
+- **`pdf.py`**:state-driven。讀 pdf-status,下載 `pending`;成功標 `ok`;失敗標 `failed` 加 `retry_after` 冷卻;偵測 0-byte 重抓。「不知是還沒試還是真抓不到」這個歧義就靠這個檔解掉。
+- **`wave.py`**:跨**所有** `data/*.jsonl` 找有 PDF、沒文章的 id,切成 per-subagent worklist 給 `/daily-digest` 並行處理。
+- **`manifest.py`**:每篇 article 按**它自己的 pub_date** 分組,寫每個 `data/articles/<pub_date>.json`。同一個 pubDate 的 calendar 條目會跨多天慢慢長大(arXiv 會 24h 內陸續補同一公告窗)。
+- **`.state/rss/`**(gitignored):`journal.jsonl` 記事、`last-fetch.json` 早退用、`pdf-status.json` PDF 任務追蹤。本機狀態,不進 git。
+- **退役**:舊 `dedup.py` 已刪——append-only-by-id 自然去重、crawl 早退取代 exit-code gate;舊 `daily_arxiv/check_stats.py` 與舊 Scrapy 管線仍在 `daily_arxiv/` 不被呼叫(死碼)。
+
+### 舊上游 AI 管線(死碼,不再呼叫;留檔僅供考古)
+這條 fork 已改成「Claude Code subscription 寫科普文章」的路子(見 `/daily-digest` skill),以下這些步驟**不再執行**,改它們對網站無效:
+- `ai/enhance.py`:LangChain + `ChatOpenAI.with_structured_output(Structure)`(tldr/motivation/method/result/conclusion)。`is_sensitive()` 呼叫 `spam.dw-dengwei.workers.dev`,**fail-closed**(服務掛掉會把論文判定為敏感丟棄)。
+- `to_md/convert.py`:依分類分組成 `data/{date}.md`。
+- 舊雙分支發布:程式碼推 `main`、資料推 `data` 分支。**新流程不用 `data` 分支**,前端從 `main` 直接讀 `data/articles/**`。
 
 ### 設定佔位符注入(讓 fork 後免改程式碼)
 `js/data-config.js`(repo owner/name)與 `js/auth-config.js`(密碼 SHA-256)含 `PLACEHOLDER_*` 字串,CI 中用 `sed` 替換。**不要手動編輯 `js/data-config.js`**(檔頭即標明 auto-generated)。
