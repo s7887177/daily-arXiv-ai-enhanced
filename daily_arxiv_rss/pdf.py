@@ -19,19 +19,35 @@ import json
 import os
 import sys
 import time
+import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from daily_arxiv_rss.state import State, now_iso
 
+# arxiv's PDF endpoint accepts either bare id (2605.18801) or versioned
+# (2605.18801v1). The versioned form returns that specific version.
+_PDF_URL = "https://arxiv.org/pdf/{id}"
+_UA = "daily-arxiv-rss/0.1 (educational use; contact via repo)"
+_HTTP_TIMEOUT = 60
+
 
 def _arxiv_downloader(arxiv_id: str, dest: str) -> None:
-    """Default downloader (kept thin so tests can inject)."""
-    import arxiv
-    client = arxiv.Client()
-    result = next(client.results(arxiv.Search(id_list=[arxiv_id])))
-    d = Path(dest)
-    result.download_pdf(dirpath=str(d.parent), filename=d.name)
+    """Default downloader: direct HTTP GET to arxiv.org/pdf/<id>.
+
+    We deliberately do NOT go through the `arxiv` Python library — its
+    Search(id_list=...) metadata lookup hits export.arxiv.org/api/query
+    which often hangs / is heavily rate-limited, even when arxiv.org/pdf
+    itself is fast. Since we already have the id, no metadata fetch is
+    needed; just GET the PDF.
+    """
+    url = _PDF_URL.format(id=arxiv_id)
+    req = urllib.request.Request(url, headers={"User-Agent": _UA})
+    Path(dest).parent.mkdir(parents=True, exist_ok=True)
+    with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
+        data = resp.read()
+    with open(dest, "wb") as f:
+        f.write(data)
 
 
 def _iso_to_dt(s: str) -> datetime:
