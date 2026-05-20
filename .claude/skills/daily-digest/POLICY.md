@@ -40,6 +40,12 @@
     - `data/rss/<cat>_<fetched-at>.xml`：每次抓的 SOT，永不覆蓋。
     - `.state/rss/`（per-machine, gitignored）：journal、pdf-status、last-fetch。
     - 無新內容時 `crawl` 早退（exit 1），artifacts 完全不動。
+12. **對 arxiv 禮貌**：
+    - 預設 PDF 下載間距 **15 秒**（依 `arxiv.org/robots.txt` 的 `Crawl-delay: 15`）。
+    - 只打 robots.txt **明文 Allow** 的 `/pdf`、`/abs`、`/list`、`/archive`、`/html`、`/catchup`；**永不**打 `/api`（明文 Disallow，會被 origin 卡）。
+    - 收到 `429`/`503` 時尊重 `Retry-After` header，並立即停止這批，等冷卻時間到才再跑。
+    - User-Agent 寫明身份(`daily-arxiv-rss/...`),不偽裝成瀏覽器。
+    - 460 篇 × 15 秒 ≈ 2 小時/天,這是「對 arxiv 友善 + 不被 ban」的可接受成本。
 
 ---
 
