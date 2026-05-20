@@ -34,12 +34,21 @@
     的 calendar 條目可以**跨多個物理日**慢慢長大——因為 arXiv 會在 24h 內
     陸續把 cross / replace 補進同一個公告窗。**不要**把今天才看到的論文
     硬塞到「今天」的 calendar；它屬於它原本的公告日。
-11. **資料源頭模組（RSS）的承諾**：
-    - `data/<pub_date>.jsonl`：只會長大,既有 id 永不消失（append-only-by-id）。
-    - `pdfs/<id>.pdf`：一旦出現就是完整檔（0-byte 會自動偵測重抓）。
-    - `data/rss/<cat>_<fetched-at>.xml`：每次抓的 SOT，永不覆蓋。
-    - `.state/rss/`（per-machine, gitignored）：journal、pdf-status、last-fetch。
-    - 無新內容時 `crawl` 早退（exit 1），artifacts 完全不動。
+11. **模組責任分界 + 對外承諾**：
+    - **crawl 模組擁有**:`data/<pub_date>.jsonl`(append-only-by-id 只長不縮)、
+      `data/rss/<cat>_<fetched-at>.xml`(SOT,永不覆蓋)、`.state/rss/last-fetch.json`
+      (它自己的早退記憶)、`.state/rss/journal.jsonl` 寫一行事件。
+      **無新內容時 exit 1,artifacts 完全不動,但這不該停止後續管線**——可能還有
+      PDF 沒抓、文章沒寫。
+    - **pdf 模組擁有**:`pdfs/<id>.pdf`(自己的輸出,size>0 為真)、
+      `.state/rss/pdf-failures.json`(**只記錄冷卻中的失敗,成功不留 state**)、
+      `.state/rss/pdf.pid`(daemon 互斥鎖)。它**自己**從 `data/*.jsonl` 推斷
+      「要抓哪些」、從 `pdfs/` 推斷「已抓哪些」,**不接受別人寫入它的 state**。
+    - **manifest 模組擁有**:`data/articles/<pub_date>.json` + `index.json`。
+      讀 `data/articles/*.md` 和 `data/*.jsonl`,按每篇自己的 `pub_date` 分組。
+    - **狀態查詢點**:`python -m daily_arxiv_rss.status` 印出 JSON snapshot
+      + `decision`,給 `/daily-digest` skill 當 state-aware entry point。
+12. **對 arxiv 禮貌**:
 12. **對 arxiv 禮貌**：
     - 預設 PDF 下載間距 **15 秒**（依 `arxiv.org/robots.txt` 的 `Crawl-delay: 15`）。
     - 只打 robots.txt **明文 Allow** 的 `/pdf`、`/abs`、`/list`、`/archive`、`/html`、`/catchup`；**永不**打 `/api`（明文 Disallow，會被 origin 卡）。

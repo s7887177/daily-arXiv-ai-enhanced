@@ -39,48 +39,81 @@ mechanism; POLICY.md describes what the user wants.
 - Do not touch `daily_arxiv/`. Do not commit `pdfs/`, `data/*.jsonl`,
   `data/rss/` (gitignored).
 
-## Procedure
+## Procedure (state-aware: any phase can be entered any time)
+
+The pipeline is restartable from any state. A fresh Claude invoking
+`/daily-digest` doesn't need to know what was already done — read the
+current state, decide, do.
+
+### 0. Read pipeline state
+```bash
+uv run python -m daily_arxiv_rss.status
+```
+Returns a JSON snapshot with the **decision** field:
+- `all_done` — every wanted id has an article. Maybe still probe (step 1)
+  for fresh arXiv content; if crawl no-ops, truly STOP.
+- `write_articles` — articles missing for ids whose PDF is already on disk.
+  Go straight to step 3 (wave loop).
+- `start_pdf` — PDFs missing and no pdf daemon running. Step 2 to launch
+  one in background, then step 3 (concurrent with the daemon).
+- `wait_for_pdfs` — pdf daemon already running, no articles eligible right
+  now. Step 3's wave loop polls and waits.
+- `crawl_then_recheck` (implicit) — always also do step 1 unless you just did.
 
 ### 1. Crawl (probe → early-exit-or-full-crawl → per-pubDate merge)
 ```bash
 uv run python -m daily_arxiv_rss.crawl
 ```
-Exit code: `0` = work done (one or more pubDate jsonls grew), `1` = no-op
-(probe identical to last run; nothing changed), `2` = error.
+Exit code: `0` = new ids added, `1` = no-op (probe unchanged), `2` = error.
 
-On `1` → tell the user "no new content since last fetch" and STOP. On `2` →
-report the error and STOP. Each paper is filed under **its own RSS-item
-pubDate** into `data/<pub_date>.jsonl` (append-only-by-id). SOTs land at
-`data/rss/<cat>_<fetched-at>.xml` (immutable). The journal at
-`.state/rss/journal.jsonl` gets a line. New ids are queued in
-`.state/rss/pdf-status.json`.
+**no-op (1) does NOT stop the pipeline** — it just means "no new ids from
+arXiv this run"; there might still be PDFs to download or articles to write
+from prior runs. Continue to step 0/2/3 based on the snapshot's decision.
 
-### 2. Download PDFs (state-driven, gentle, gitignored)
+Each paper is filed under **its own RSS-item pubDate** into
+`data/<pub_date>.jsonl` (append-only-by-id). SOTs land at
+`data/rss/<cat>_<fetched-at>.xml` (immutable). Journal entry recorded.
+
+### 2. Start PDF downloader (only if snapshot said `start_pdf`)
 ```bash
-uv run python -m daily_arxiv_rss.pdf
+nohup uv run python -m daily_arxiv_rss.pdf \
+  > /tmp/daily-digest-pdf.log 2>&1 &
+disown
 ```
-Reads `.state/rss/pdf-status.json`; downloads `pending` ids; on success
-marks `ok`; on failure marks `failed` with a `retry_after` cool-down. 0-byte
-files are detected and refetched. Persistent failures (e.g. arXiv 429-ing a
-specific id) become an honest "no PDF" in step 3, never invented from
-abstract alone.
+The pdf module is self-contained: it derives **wanted** from
+`data/*.jsonl`, **have** from `pdfs/<id>.pdf` size>0, and only persists
+**cool-downs** in `.state/rss/pdf-failures.json`. A `.state/rss/pdf.pid`
+lock prevents two from running at once. **The skill never starts a second
+pdf daemon** — the snapshot tells you when one is already alive.
 
-### 3. Process papers as parallel subagent waves
+Default 15s/req per `arxiv.org/robots.txt` Crawl-delay. Don't override.
 
-A day is too large to do serially. Split the remaining work into per-subagent
-worklists and dispatch a wave of parallel subagents; commit between waves so
-the site fills in incrementally; repeat until none remain.
+### 3. Wave loop with patience (writes articles concurrent with PDF daemon)
 
-```bash
-uv run python -m daily_arxiv_rss.wave --wave 100 --per 10
+A day is too large to do serially, AND PDFs may still be arriving. Loop:
+
 ```
-This prunes 0-byte PDFs, scans every `data/<pub_date>.jsonl`, then writes
-`/tmp/digest-wave/agent-NN.jsonl` — each is one subagent's worklist (papers
-with a whole PDF, no article yet, newest arXiv-id first). Dispatch one
-subagent per `agent-NN.jsonl` **in parallel** (general-purpose agents;
-~10 agents/wave). After each wave: run step 4 (manifest) + step 5
-(commit/push), then re-run the `wave` command and dispatch again. Stop when
-`picked=0`. Skip-if-exists makes the whole loop resumable.
+LOOP:
+  uv run python -m daily_arxiv_rss.wave --wave 100 --per 10
+  if picked > 0:
+      dispatch parallel subagents (one per agent-NN.jsonl)
+      wait for ALL agents to finish
+      uv run python -m daily_arxiv_rss.manifest   # step 4
+      step-5 commit + push                          # incremental deploy
+      continue LOOP
+  else:
+      uv run python -m daily_arxiv_rss.status      # refresh
+      if decision == "all_done": break
+      if decision == "wait_for_pdfs":
+          sleep 60s ; continue LOOP                 # let pdf daemon catch up
+      if decision == "start_pdf":
+          restart step 2 (daemon died) ; continue LOOP
+      else (only unobtainable ids left): break
+```
+
+Each subagent gets its `agent-NN.jsonl` worklist — papers whose PDF is on
+disk (size>0, mtime older than ~8s) and have no article yet, newest arXiv
+id first. Dispatch in parallel (general-purpose agents; ~10/wave).
 
 **Each subagent** is given its `agent-NN.jsonl` and these instructions:
 process every record IN ORDER, ONE AT A TIME (fully finish one before the

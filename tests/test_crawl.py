@@ -69,3 +69,13 @@ def test_crawl_saves_versioned_sot(tmp_path, cs_ai_xml, cs_cl_xml):
     for p in sots:
         ts = p.stem.split("_", 1)[1]
         assert len(ts) == 16 and ts.endswith("Z")            # ISO basic UTC
+
+
+def test_crawl_does_not_touch_pdf_state(tmp_path, cs_ai_xml):
+    """crawl never writes into pdf-failures.json — that file is owned by
+    the pdf module. The pdf module discovers wanted ids from jsonl, not
+    from a queue we'd write here."""
+    crawl.crawl(["cs.AI"], repo_root=str(tmp_path),
+                fetcher=lambda c: cs_ai_xml)
+    pf = tmp_path / ".state/rss/pdf-failures.json"
+    assert not pf.exists()

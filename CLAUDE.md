@@ -21,7 +21,8 @@ bash run.sh                      # 必須在 repo 根目錄執行
 
 # RSS 模組(新模型;見 .claude/skills/daily-digest/POLICY.md)
 uv run python -m daily_arxiv_rss.crawl       # 探子 → 早退 / 全抓 → per-pubDate jsonl;exit 0=有新,1=no-op,2=err
-uv run python -m daily_arxiv_rss.pdf         # 讀 .state/rss/pdf-status.json,下載 pending,失敗有 retry_after
+uv run python -m daily_arxiv_rss.status      # JSON snapshot + decision(any-time entry)
+uv run python -m daily_arxiv_rss.pdf         # 自己從 data/*.jsonl + pdfs/ 推導工作;只存冷卻 in .state/rss/pdf-failures.json
 uv run python -m daily_arxiv_rss.wave --wave 100 --per 10   # 切下一波 subagent 工作清單
 uv run python -m daily_arxiv_rss.manifest    # 用每篇自己的 pub_date 重建 per-pubDate manifest + index.json
 
@@ -54,12 +55,13 @@ python update_readme.py          # 由 data/*.md 重新產生 README.md
 ### RSS 模組(`daily_arxiv_rss/`)的承諾
 跨檔案才能看懂的是「**每篇論文歸屬日 = 它自己 RSS item 的 pubDate**」這條核心政策,以及伴隨的狀態管理。詳見 `.claude/skills/daily-digest/POLICY.md`(政策)和 `SKILL.md`(機制)。**那兩份是 source of truth**,以下只是地圖:
 
-- **`crawl.py`**:探子先抓第一個 cat → GUID set hash 跟 `.state/rss/last-fetch.json` 比 → 一樣就 exit 1(no-op,artifacts 完全不動)。有變才全抓所有 cat + cross feeds。SOT 存 `data/rss/<cat>_<ISO-UTC>.xml`,**永不覆蓋**。每筆 record 帶自己的 `pub_date`,寫進 `data/<pub_date>.jsonl`(append-only-by-id)。新 id 進 `.state/rss/pdf-status.json` 當 `pending`。
-- **`pdf.py`**:state-driven。讀 pdf-status,下載 `pending`;成功標 `ok`;失敗標 `failed` 加 `retry_after` 冷卻;偵測 0-byte 重抓。「不知是還沒試還是真抓不到」這個歧義就靠這個檔解掉。
+- **`crawl.py`**:探子先抓第一個 cat → GUID set hash 跟 `.state/rss/last-fetch.json` 比 → 一樣就 exit 1(no-op,artifacts 完全不動)。有變才全抓所有 cat + cross feeds。SOT 存 `data/rss/<cat>_<ISO-UTC>.xml`,**永不覆蓋**。每筆 record 帶自己的 `pub_date`,寫進 `data/<pub_date>.jsonl`(append-only-by-id)。**不寫入 pdf 模組的 state**。
+- **`pdf.py`**:**self-contained,filesystem 為真理**。從 `data/*.jsonl` 推「要抓」、從 `pdfs/<id>.pdf` size>0 推「已抓」。eligible = wanted - have - cooldown。成功**不留 state**;失敗才寫進 `.state/rss/pdf-failures.json` 帶 `retry_after`。pidfile `.state/rss/pdf.pid` 防止兩個 daemon 同時跑。直接打 `arxiv.org/pdf/<id>`,**不走 arxiv 套件**(它打 `/api` 違反 robots.txt 且常 hang)。預設 15s/req 依 robots.txt Crawl-delay。
+- **`status.py`**:`python -m daily_arxiv_rss.status` 印 JSON snapshot + `decision`(`all_done|write_articles|start_pdf|wait_for_pdfs`),給 `/daily-digest` skill 當 state-aware entry。
 - **`wave.py`**:跨**所有** `data/*.jsonl` 找有 PDF、沒文章的 id,切成 per-subagent worklist 給 `/daily-digest` 並行處理。
 - **`manifest.py`**:每篇 article 按**它自己的 pub_date** 分組,寫每個 `data/articles/<pub_date>.json`。同一個 pubDate 的 calendar 條目會跨多天慢慢長大(arXiv 會 24h 內陸續補同一公告窗)。
-- **`.state/rss/`**(gitignored):`journal.jsonl` 記事、`last-fetch.json` 早退用、`pdf-status.json` PDF 任務追蹤。本機狀態,不進 git。
-- **退役**:舊 `dedup.py` 已刪——append-only-by-id 自然去重、crawl 早退取代 exit-code gate;舊 `daily_arxiv/check_stats.py` 與舊 Scrapy 管線仍在 `daily_arxiv/` 不被呼叫(死碼)。
+- **`.state/rss/`**(gitignored):`journal.jsonl` 記事、`last-fetch.json`(crawl)、`pdf-failures.json`(pdf,只記冷卻)、`pdf.pid`(pdf daemon lock)。本機狀態,不進 git。
+- **退役**:舊 `dedup.py`、舊「pending/ok queue」概念都已死(append-only-by-id + filesystem-as-truth 取代);舊 `daily_arxiv/check_stats.py` 與舊 Scrapy 管線仍在 `daily_arxiv/` 不被呼叫(死碼)。
 
 ### 舊上游 AI 管線(死碼,不再呼叫;留檔僅供考古)
 這條 fork 已改成「Claude Code subscription 寫科普文章」的路子(見 `/daily-digest` skill),以下這些步驟**不再執行**,改它們對網站無效:

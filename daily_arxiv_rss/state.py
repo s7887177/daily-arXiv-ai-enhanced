@@ -1,20 +1,24 @@
 """Per-machine state for the RSS module (gitignored under ``.state/rss/``).
 
-Three small files plus an append-only event journal:
+  .state/rss/journal.jsonl       append-only log of actions
+  .state/rss/last-fetch.json     { cat: {fetched_at, guid_hash, items} }
+  .state/rss/pdf-failures.json   { id : {attempts, last_attempt, last_err,
+                                         retry_after} } -- ONLY ids in active
+                                cool-down. Removed on success. Owned 100% by
+                                the pdf module; no peer ever writes here.
+  .state/rss/pdf.pid             PID of the running pdf downloader, written
+                                at start, removed at exit; stale-PID-safe.
 
-  .state/rss/journal.jsonl     append-only log of actions (one event per line)
-  .state/rss/last-fetch.json   { cat: {fetched_at, guid_hash, items} }
-  .state/rss/pdf-status.json   { id : {status, attempts, last_attempt, ...} }
-
-State holds only the facts the filesystem cannot represent: "this PDF failed
-and is in cool-down", "the last cs.AI snapshot we observed hashed to X".
-Artifacts on disk (``data/<pubDate>.jsonl``, ``data/articles/``, ``pdfs/``)
-remain the source of truth for current data.
+Design principle: state holds ONLY facts the filesystem cannot represent.
+"Should we have this PDF?" → ``data/<pubDate>.jsonl`` (a peer's read-only
+artifact). "Do we have it?" → ``pdfs/<id>.pdf`` exists with size > 0.
+Anything else (failure history, cool-down clocks, daemon lock) belongs here.
 """
 from __future__ import annotations
 
 import hashlib
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -72,23 +76,52 @@ class State:
                      "items": items}
         _write_json(self.dir / "last-fetch.json", data)
 
-    # ---- pdf-status -------------------------------------------------------
-    def pdf_status(self) -> dict:
-        return _read_json(self.dir / "pdf-status.json")
+    # ---- pdf-failures (only ids in active cool-down) ----------------------
+    def pdf_failures(self) -> dict:
+        return _read_json(self.dir / "pdf-failures.json")
 
-    def write_pdf_status(self, data: dict) -> None:
-        _write_json(self.dir / "pdf-status.json", data)
+    def write_pdf_failures(self, data: dict) -> None:
+        _write_json(self.dir / "pdf-failures.json", data)
 
-    def queue_pdfs(self, ids) -> int:
-        """Mark new ids as ``pending``; existing ids are left alone."""
-        status = self.pdf_status()
-        added = 0
-        for arxiv_id in ids:
-            if arxiv_id not in status:
-                status[arxiv_id] = {"status": "pending", "attempts": 0}
-                added += 1
-        self.write_pdf_status(status)
-        return added
+    # ---- pdf daemon pidfile (lock) ---------------------------------------
+    def _pid_path(self) -> Path:
+        return self.dir / "pdf.pid"
+
+    def pdf_daemon_pid(self) -> int | None:
+        """Return the live PID if a daemon is running, else None.
+        Stale pidfiles (PID dead) are cleaned up here."""
+        p = self._pid_path()
+        if not p.exists():
+            return None
+        try:
+            pid = int(p.read_text().strip())
+        except (ValueError, OSError):
+            p.unlink(missing_ok=True)
+            return None
+        if not _pid_alive(pid):
+            p.unlink(missing_ok=True)
+            return None
+        return pid
+
+    def pdf_daemon_alive(self) -> bool:
+        return self.pdf_daemon_pid() is not None
+
+    def acquire_pdf_pidfile(self) -> bool:
+        """Try to claim the pdf-daemon lock. Returns True if we got it,
+        False if another daemon already holds a live PID."""
+        if self.pdf_daemon_alive():
+            return False
+        self._pid_path().write_text(str(os.getpid()))
+        return True
+
+    def release_pdf_pidfile(self) -> None:
+        p = self._pid_path()
+        if p.exists():
+            try:
+                if int(p.read_text().strip()) == os.getpid():
+                    p.unlink()
+            except (ValueError, OSError):
+                p.unlink(missing_ok=True)
 
     # ---- SOT save (RSS XML, never overwritten) ---------------------------
     def save_sot(self, category: str, xml_bytes: bytes,
@@ -98,3 +131,13 @@ class State:
         p = sot_dir / f"{category}_{fetched_at}.xml"
         p.write_bytes(xml_bytes)
         return p
+
+
+def _pid_alive(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+    except (ProcessLookupError, PermissionError):
+        return False
+    except OSError:
+        return False
+    return True

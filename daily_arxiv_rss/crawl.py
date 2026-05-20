@@ -84,23 +84,22 @@ def crawl(categories, repo_root: str = ".", fetcher=None) -> dict:
     idx = build_announce_index(parsed)
     records = assemble(requested, idx)
 
-    # 6. merge into per-pubDate jsonls (append-only-by-id)
+    # 6. merge into per-pubDate jsonls (append-only-by-id).
+    #    NB: the pdf module owns the "what to fetch" decision and reads
+    #    these jsonls directly; we do NOT write into pdf-failures here.
     merge_summary = writer.merge_by_pub_date(
         records, data_dir=str(os.path.join(repo_root, "data")))
 
-    # 7. queue new ids for PDF download
-    queued = st.queue_pdfs(r["id"] for r in records)
-
-    # 8. record last-fetch + journal
+    # 7. record last-fetch + journal
     st.set_last_fetch(probe_cat, fetched_at, h, len(probe_items))
     st.journal({"kind": "crawl", "status": "ok", "fetched_at": fetched_at,
                 "categories": sorted(parsed),
-                "by_pub_date": merge_summary, "pdf_queued": queued,
+                "by_pub_date": merge_summary,
                 "records": len(records)})
 
     return {"status": "ok", "fetched_at": fetched_at,
             "categories": sorted(parsed), "records": len(records),
-            "by_pub_date": merge_summary, "pdf_queued": queued}
+            "by_pub_date": merge_summary}
 
 
 def parse_args(argv=None):

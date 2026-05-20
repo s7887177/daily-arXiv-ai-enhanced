@@ -1,21 +1,35 @@
-"""State-driven PDF downloader.
+"""PDF downloader, self-contained.
 
-Reads ``.state/rss/pdf-status.json`` (populated by ``crawl``) and downloads
-PDFs to ``pdfs/<id>.pdf``. Status transitions per id:
+The pdf module owns its work. It computes what to fetch from the world's
+state, not from a "queue" written by someone else:
 
-  pending  → ok       (file downloaded, size > 0)
-  pending  → failed   (download error; sets retry_after for cool-down)
-  failed   → ok       (a later retry succeeds)
-  ok       → ok       (skipped; file present and whole)
-  ok       → pending  (file missing or 0-byte; will retry)
+  wanted    = union of `id` across every ``data/<pubDate>.jsonl``
+              (the crawler's read-only artifact)
+  on_disk   = { id : pdfs/<id>.pdf exists AND size > 0 }
+              (filesystem == truth of "is this PDF really here")
+  failures  = .state/rss/pdf-failures.json
+              (only ids in active cool-down — owned by this module)
+  eligible  = wanted - on_disk - in_cooldown(failures)
 
-Honest semantics so consumers can tell "we tried and arXiv refuses" apart
-from "we haven't tried yet".
+Success leaves no state entry: the PDF on disk IS the success record.
+Re-running picks up any wanted-but-missing id (including ones the user
+manually deletes). Failures remove themselves from pdf-failures.json on
+their first subsequent success.
+
+Politeness: ``arxiv.org/robots.txt`` says ``Crawl-delay: 15`` for the
+``*`` user-agent. We honour that as the default per-request delay and
+respect ``Retry-After`` on 429/503. /pdf is explicitly Allow'd; we never
+touch /api (which the arxiv Python library hit, hung 30s+ on, and which
+is Disallow'd anyway).
+
+A pidfile (``.state/rss/pdf.pid``) prevents two downloaders racing on the
+same machine; the skill checks it before deciding whether to start one.
 """
 from __future__ import annotations
 
 import argparse
 import email.utils
+import glob
 import json
 import os
 import sys
@@ -27,19 +41,16 @@ from pathlib import Path
 
 from daily_arxiv_rss.state import State, now_iso
 
-# arxiv's PDF endpoint accepts either bare id (2605.18801) or versioned
-# (2605.18801v1). The versioned form returns that specific version.
-# /pdf is explicitly Allow'd by arxiv.org/robots.txt for User-agent *.
+# arxiv.org/robots.txt: Allow /pdf; Crawl-delay: 15 for User-agent *.
 _PDF_URL = "https://arxiv.org/pdf/{id}"
 _UA = "daily-arxiv-rss/0.1 (educational use; contact via repo)"
 _HTTP_TIMEOUT = 60
-# arxiv.org/robots.txt sets `Crawl-delay: 15` for User-agent *. Honor it.
 POLITE_DELAY_S = 15.0
 
 
 class RateLimited(Exception):
-    """Raised by the downloader on 429/503. Carries the server's Retry-After
-    (seconds from now) when present."""
+    """Raised on 429/503; carries server-supplied Retry-After (in seconds)."""
+
     def __init__(self, code: int, retry_after_seconds: float | None):
         super().__init__(f"HTTP {code}")
         self.code = code
@@ -47,7 +58,6 @@ class RateLimited(Exception):
 
 
 def _parse_retry_after(value: str | None) -> float | None:
-    """Parse RFC 7231 Retry-After (integer seconds OR HTTP-date)."""
     if not value:
         return None
     value = value.strip()
@@ -69,13 +79,7 @@ def _parse_retry_after(value: str | None) -> float | None:
 def _arxiv_downloader(arxiv_id: str, dest: str) -> None:
     """Default downloader: direct HTTP GET to arxiv.org/pdf/<id>.
 
-    We deliberately do NOT go through the `arxiv` Python library — its
-    Search(id_list=...) metadata lookup hits export.arxiv.org/api/query
-    (which arxiv.org/robots.txt Disallows for User-agent *) and frequently
-    hangs 30s+. We already have the id, no metadata fetch needed.
-
-    On 429/503 raises ``RateLimited`` (with Retry-After when given) so the
-    caller can respect the server's cool-down rather than guessing.
+    On 429/503 raises :class:`RateLimited` carrying ``Retry-After``.
     """
     url = _PDF_URL.format(id=arxiv_id)
     req = urllib.request.Request(url, headers={"User-Agent": _UA})
@@ -102,118 +106,161 @@ def _retry_after_iso(hours: float) -> str:
         .strftime("%Y%m%dT%H%M%SZ")
 
 
-def download_all(repo_root: str = ".", *,
-                 downloader=_arxiv_downloader, sleep=time.sleep,
-                 retries: int = 3, base_delay: float = POLITE_DELAY_S,
-                 retry_after_hours: float = 4.0,
-                 max_ids: int | None = None) -> dict:
-    st = State(repo_root)
-    status = st.pdf_status()
-    pdfs_dir = Path(repo_root) / "pdfs"
-    pdfs_dir.mkdir(exist_ok=True)
-    summary = {"ok": 0, "skipped_existing": 0, "skipped_cooldown": 0,
-               "fetched_now": 0, "failed": 0}
-    now = datetime.now(timezone.utc)
+def wanted_ids(repo_root: str = ".") -> set[str]:
+    """Collect ids the crawler said it wanted — union across all per-pubDate
+    jsonls under ``data/``."""
+    wanted: set[str] = set()
+    for jp in sorted(Path(repo_root).glob("data/*.jsonl")):
+        with jp.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    r = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if "id" in r:
+                    wanted.add(r["id"])
+    return wanted
 
+
+def on_disk_ids(repo_root: str = ".") -> set[str]:
+    """ids whose ``pdfs/<id>.pdf`` exists and has size > 0."""
+    out: set[str] = set()
+    for p in glob.glob(str(Path(repo_root) / "pdfs" / "*.pdf")):
+        try:
+            if os.path.getsize(p) > 0:
+                out.add(Path(p).stem)
+        except OSError:
+            continue
+    return out
+
+
+def _eligible(wanted: set[str], have: set[str], failures: dict,
+              now: datetime) -> tuple[list[str], int]:
+    """Return (eligible_ids_newest_first, n_in_cooldown)."""
+    cooldown = 0
     eligible = []
-    for arxiv_id, info in status.items():
-        dest = pdfs_dir / f"{arxiv_id}.pdf"
-        cur = info.get("status", "pending")
-
-        # ok + file whole → skip; ok + file missing/0-byte → re-queue
-        if cur == "ok":
-            if dest.exists() and dest.stat().st_size > 0:
-                summary["skipped_existing"] += 1
-                continue
-            info["status"] = "pending"            # was lost on disk
-            cur = "pending"
-
-        # failed and still in cool-down
-        if cur == "failed":
-            ra = info.get("retry_after")
+    for arxiv_id in sorted(wanted - have, reverse=True):    # newest-id first
+        f = failures.get(arxiv_id)
+        if f:
+            ra = f.get("retry_after")
             try:
                 ra_dt = _iso_to_dt(ra) if ra else None
             except ValueError:
                 ra_dt = None
             if ra_dt and now < ra_dt:
-                summary["skipped_cooldown"] += 1
+                cooldown += 1
                 continue
-
         eligible.append(arxiv_id)
-        if max_ids is not None and len(eligible) >= max_ids:
-            break
+    return eligible, cooldown
 
-    total = len(eligible)
-    print(f"pdf: {total} eligible "
-          f"(ok={summary['skipped_existing']}, "
-          f"cooldown={summary['skipped_cooldown']})",
-          file=sys.stderr, flush=True)
 
-    for i, arxiv_id in enumerate(eligible, 1):
-        info = status[arxiv_id]
-        dest = pdfs_dir / f"{arxiv_id}.pdf"
-        info["attempts"] = info.get("attempts", 0) + 1
-        info["last_attempt"] = now_iso()
-        ok = False
-        last_err = None
-        server_retry_after = None
-        for attempt in range(1, retries + 1):
-            try:
-                downloader(arxiv_id, str(dest))
-                if dest.exists() and dest.stat().st_size > 0:
-                    ok = True
-                    break
-                last_err = "0-byte response"
-                if dest.exists():
-                    dest.unlink()                  # cleanup corrupt file
-            except RateLimited as e:
-                last_err = str(e)
-                server_retry_after = e.retry_after_seconds
-                break                              # don't keep hammering
-            except Exception as e:
-                last_err = f"{type(e).__name__}: {e}"
-            if attempt < retries:
-                sleep(base_delay * (2 ** (attempt - 1)))
-        if ok:
-            info["status"] = "ok"
-            info.pop("last_err", None)
-            info.pop("retry_after", None)
-            summary["ok"] += 1
-            summary["fetched_now"] += 1
-            size_kb = dest.stat().st_size // 1024
-            print(f"[{i:4d}/{total}] {arxiv_id}  ok  ({size_kb} KB)",
-                  file=sys.stderr, flush=True)
-        else:
-            info["status"] = "failed"
-            info["last_err"] = last_err or "unknown"
-            # Respect server Retry-After when given; else use the configured
-            # cool-down. Stored as ISO so live queries are readable.
-            if server_retry_after is not None:
-                ra_iso = (datetime.now(timezone.utc) +
-                          timedelta(seconds=server_retry_after)) \
-                    .strftime("%Y%m%dT%H%M%SZ")
+def download_all(repo_root: str = ".", *,
+                 downloader=_arxiv_downloader, sleep=time.sleep,
+                 retries: int = 3, base_delay: float = POLITE_DELAY_S,
+                 retry_after_hours: float = 4.0,
+                 max_ids: int | None = None,
+                 _use_pidfile: bool = True) -> dict:
+    """Drain the eligible queue. Filesystem is the source of truth for
+    ``wanted`` (jsonl) and ``have`` (pdfs/). State only persists cool-downs."""
+    st = State(repo_root)
+    summary = {"wanted": 0, "have": 0, "eligible": 0,
+               "ok": 0, "skipped_cooldown": 0,
+               "fetched_now": 0, "failed": 0, "rate_limited_bail": False}
+    if _use_pidfile and not st.acquire_pdf_pidfile():
+        other = st.pdf_daemon_pid()
+        print(f"[pdf] another downloader is running (pid {other}); exiting.",
+              file=sys.stderr, flush=True)
+        summary["rate_limited_bail"] = False
+        summary["already_running"] = True
+        return summary
+    try:
+        wanted = wanted_ids(repo_root)
+        have = on_disk_ids(repo_root)
+        failures = st.pdf_failures()
+        now = datetime.now(timezone.utc)
+        eligible, cooldown = _eligible(wanted, have, failures, now)
+        summary["wanted"] = len(wanted)
+        summary["have"] = len(wanted & have)
+        summary["skipped_cooldown"] = cooldown
+        if max_ids is not None:
+            eligible = eligible[:max_ids]
+        summary["eligible"] = len(eligible)
+
+        (Path(repo_root) / "pdfs").mkdir(exist_ok=True)
+        total = len(eligible)
+        print(f"pdf: wanted={summary['wanted']} have={summary['have']} "
+              f"cooldown={cooldown} eligible={total}",
+              file=sys.stderr, flush=True)
+
+        for i, arxiv_id in enumerate(eligible, 1):
+            dest = Path(repo_root) / "pdfs" / f"{arxiv_id}.pdf"
+            ok = False
+            last_err = None
+            server_retry_after = None
+            attempts = (failures.get(arxiv_id) or {}).get("attempts", 0) + 1
+            for attempt in range(1, retries + 1):
+                try:
+                    downloader(arxiv_id, str(dest))
+                    if dest.exists() and dest.stat().st_size > 0:
+                        ok = True
+                        break
+                    last_err = "0-byte response"
+                    if dest.exists():
+                        dest.unlink()                  # cleanup corrupt file
+                except RateLimited as e:
+                    last_err = str(e)
+                    server_retry_after = e.retry_after_seconds
+                    break                              # don't hammer further
+                except Exception as e:
+                    last_err = f"{type(e).__name__}: {e}"
+                if attempt < retries:
+                    sleep(base_delay * (2 ** (attempt - 1)))
+            if ok:
+                failures.pop(arxiv_id, None)           # success → no state
+                summary["ok"] += 1
+                summary["fetched_now"] += 1
+                size_kb = dest.stat().st_size // 1024
+                print(f"[{i:4d}/{total}] {arxiv_id}  ok  ({size_kb} KB)",
+                      file=sys.stderr, flush=True)
             else:
-                ra_iso = _retry_after_iso(retry_after_hours)
-            info["retry_after"] = ra_iso
-            summary["failed"] += 1
-            tag = "RATE-LIMITED" if server_retry_after is not None else "FAIL"
-            print(f"[{i:4d}/{total}] {arxiv_id}  {tag}  {last_err}  "
-                  f"retry_after={ra_iso}", file=sys.stderr, flush=True)
-            # If the server told us to back off, stop the batch — re-running
-            # later will pick up where we left off via skip-cooldown.
-            if server_retry_after is not None:
-                st.write_pdf_status(status)
-                print(f"[bail] server asked for cool-down; stopping batch. "
-                      f"Re-run after {ra_iso}.", file=sys.stderr, flush=True)
-                break
-        # write state after EVERY id so live queries see real progress
-        st.write_pdf_status(status)
-        sleep(base_delay)
+                if server_retry_after is not None:
+                    ra_iso = (datetime.now(timezone.utc) +
+                              timedelta(seconds=server_retry_after)) \
+                        .strftime("%Y%m%dT%H%M%SZ")
+                else:
+                    ra_iso = _retry_after_iso(retry_after_hours)
+                failures[arxiv_id] = {
+                    "attempts": attempts,
+                    "last_attempt": now_iso(),
+                    "last_err": last_err or "unknown",
+                    "retry_after": ra_iso,
+                }
+                summary["failed"] += 1
+                tag = "RATE-LIMITED" if server_retry_after is not None \
+                    else "FAIL"
+                print(f"[{i:4d}/{total}] {arxiv_id}  {tag}  {last_err}  "
+                      f"retry_after={ra_iso}",
+                      file=sys.stderr, flush=True)
+                if server_retry_after is not None:
+                    st.write_pdf_failures(failures)
+                    summary["rate_limited_bail"] = True
+                    print(f"[bail] server asked for cool-down; stopping. "
+                          f"Re-run after {ra_iso}.",
+                          file=sys.stderr, flush=True)
+                    break
+            # persist after each id so live queries reflect reality
+            st.write_pdf_failures(failures)
+            sleep(base_delay)
 
-    st.journal({"kind": "pdf", "summary": summary,
-                "eligible": len(eligible)})
-    print(f"PDF summary: {summary}", file=sys.stderr, flush=True)
-    return summary
+        st.journal({"kind": "pdf", "summary": summary})
+        print(f"PDF summary: {summary}", file=sys.stderr, flush=True)
+        return summary
+    finally:
+        if _use_pidfile:
+            st.release_pdf_pidfile()
 
 
 def main(argv=None):

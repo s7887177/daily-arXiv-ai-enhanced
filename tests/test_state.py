@@ -1,4 +1,5 @@
 import json
+import os
 
 from daily_arxiv_rss.state import State, guid_hash
 
@@ -23,15 +24,40 @@ def test_last_fetch_roundtrip(tmp_path):
     assert s.last_fetch("cs.CL")["items"] == 200
 
 
-def test_queue_pdfs_only_adds_new(tmp_path):
+def test_pdf_failures_roundtrip(tmp_path):
     s = State(str(tmp_path))
-    added = s.queue_pdfs(["a", "b"])
-    assert added == 2
-    s.write_pdf_status({**s.pdf_status(),
-                        "a": {"status": "ok", "attempts": 1}})
-    added2 = s.queue_pdfs(["a", "b", "c"])
-    assert added2 == 1                                # only "c" was new
-    assert s.pdf_status()["a"]["status"] == "ok"      # not clobbered
+    assert s.pdf_failures() == {}
+    s.write_pdf_failures({"2605.0001v1":
+                          {"attempts": 2, "last_err": "HTTP 429",
+                           "retry_after": "20260521T010000Z"}})
+    f = s.pdf_failures()
+    assert f["2605.0001v1"]["last_err"] == "HTTP 429"
+
+
+def test_pdf_daemon_lock_lifecycle(tmp_path):
+    s = State(str(tmp_path))
+    assert s.pdf_daemon_alive() is False
+    assert s.pdf_daemon_pid() is None
+    assert s.acquire_pdf_pidfile() is True
+    assert s.pdf_daemon_alive() is True
+    assert s.pdf_daemon_pid() == os.getpid()
+    # second acquire by SAME state object should refuse (same machine, same pid live)
+    assert s.acquire_pdf_pidfile() is False
+    s.release_pdf_pidfile()
+    assert s.pdf_daemon_alive() is False
+    assert s.pdf_daemon_pid() is None
+
+
+def test_pdf_daemon_lock_clears_stale_pidfile(tmp_path):
+    """A pidfile pointing at a dead pid must be cleaned up automatically."""
+    s = State(str(tmp_path))
+    pidfile = tmp_path / ".state/rss/pdf.pid"
+    pidfile.parent.mkdir(parents=True, exist_ok=True)
+    pidfile.write_text("999999")          # extremely unlikely to be alive
+    assert s.pdf_daemon_alive() is False  # stale → swept
+    assert not pidfile.exists()
+    assert s.acquire_pdf_pidfile() is True
+    s.release_pdf_pidfile()
 
 
 def test_save_sot_versioned(tmp_path):
