@@ -1,5 +1,11 @@
 """Probe → early-exit-on-no-change → full crawl → per-pubDate JSONL merge.
 
+關於 early-exit：
+- 每次 rss 抓下來，會逐筆比較論文，沒有差異就離開
+關於 per-pubDate JSONL merge：
+- 同一個 id 不重複寫入（append-only-by-id）
+- 如果 id 已存在就跳過，確保冪等性
+
 This is the entry point of the RSS module. Its **promise** to consumers:
 
   After successful invocation:
@@ -29,13 +35,42 @@ from daily_arxiv_rss.transform import (assemble, build_announce_index)
 def _default_fetcher(category: str) -> bytes:
     return feeds.fetch(feeds.feed_url(category))
 
-
 def crawl(categories, repo_root: str = ".", fetcher=None) -> dict:
+    """從arxiv上抓一組類別的RSS們下來，
+    
+    Args: 
+        fetcher: 給他一個類別，他去抓該類別的RSS給你
+    
+    Returns:
+        ```json
+        {
+            "status": "no_op", // 跟上次一樣，不用做任何事
+            "probe": probe_cat, // 探索用category
+            "items": len(probe_items) // 探索的論文數量
+        }
+        ```
+        或
+        ```json
+        {
+            "status": "ok", // 跟上次至少有一篇論文不同
+            "fetched_at": fetched_at, // fetch 時間
+            "categories": sorted(parsed), // 所有抓下來的 categories
+            "records": len(records), // record 的數量
+            "by_pub_date":  {
+                "added": 3, // 新增的數量
+                "total": 47 // 合併後的總數
+            }, 
+        }        
+        ```
+    Side Effect:
+        - 儲存原始的 RSS XML 到 `data/rss/<cat>_<fetched_at>.xml`
+        - 
+    """
     if fetcher is None:
         fetcher = _default_fetcher
     if not categories:
         raise ValueError("no categories")
-    st = state_mod.State(repo_root)
+    state = state_mod.State(repo_root)
     probe_cat = categories[0]
 
     # 1. probe (cheap): always fetch the first category and hash its GUID set
@@ -43,17 +78,17 @@ def crawl(categories, repo_root: str = ".", fetcher=None) -> dict:
     probe_items = parse_feed(probe_xml)
     h = state_mod.guid_hash(it.guid for it in probe_items)
     fetched_at = state_mod.now_iso()
-    last = st.last_fetch(probe_cat)
+    last = state.last_fetch(probe_cat)
 
     # 2. early-exit: identical GUID set since last run → no work
     if last and last.get("guid_hash") == h:
-        st.journal({"kind": "crawl", "status": "no_op", "probe": probe_cat,
+        state.journal({"kind": "crawl", "status": "no_op", "probe": probe_cat,
                     "items": len(probe_items)})
         return {"status": "no_op", "probe": probe_cat,
                 "items": len(probe_items)}
 
     # 3. probe shows change → save it and fetch the rest
-    st.save_sot(probe_cat, probe_xml, fetched_at)
+    state.save_sot(probe_cat, probe_xml, fetched_at)
     parsed: dict[str, list] = {probe_cat: probe_items}
     for cat in categories[1:]:
         try:
@@ -61,22 +96,22 @@ def crawl(categories, repo_root: str = ".", fetcher=None) -> dict:
         except Exception as e:                # one bad cat shouldn't kill all
             print(f"[warn] fetch failed {cat}: {e}", file=sys.stderr)
             continue
-        st.save_sot(cat, xml, fetched_at)
+        state.save_sot(cat, xml, fetched_at)
         parsed[cat] = parse_feed(xml)
 
     # 4. supplementary cross-resolution feeds (best-effort)
     extra: set[str] = set()
     for items in parsed.values():
-        for it in items:
-            if it.announce_type == "cross":
-                extra.update(it.categories)
+        for item in items:
+            if item.announce_type == "cross":
+                extra.update(item.categories)
     for cat in sorted(extra - set(parsed)):
         try:
             xml = fetcher(cat)
         except Exception as e:
             print(f"[warn] cross-feed fetch failed {cat}: {e}", file=sys.stderr)
             continue
-        st.save_sot(cat, xml, fetched_at)
+        state.save_sot(cat, xml, fetched_at)
         parsed[cat] = parse_feed(xml)
 
     # 5. assemble records (existing transform logic; now tags pub_date)
@@ -91,8 +126,8 @@ def crawl(categories, repo_root: str = ".", fetcher=None) -> dict:
         records, data_dir=str(os.path.join(repo_root, "data")))
 
     # 7. record last-fetch + journal
-    st.set_last_fetch(probe_cat, fetched_at, h, len(probe_items))
-    st.journal({"kind": "crawl", "status": "ok", "fetched_at": fetched_at,
+    state.set_last_fetch(probe_cat, fetched_at, h, len(probe_items))
+    state.journal({"kind": "crawl", "status": "ok", "fetched_at": fetched_at,
                 "categories": sorted(parsed),
                 "by_pub_date": merge_summary,
                 "records": len(records)})
